@@ -97,49 +97,59 @@ export async function PATCH(
       throw new ValidationError('Cannot transition from final status to non-final status')
     }
 
-    // Update lead in transaction
-    const updated = await prisma.$transaction(async (tx) => {
-      // Update lead
-      const updatedLead = await tx.lead.update({
-        where: { id },
-        data: {
-          currentStatusId: validated.newStatusId,
-          lastContactedAt: new Date(),
-        },
-        include: {
-          currentStatus: true,
-          assignedTo: {
-            select: {
-              id: true,
-              name: true,
+    // Update lead in transaction with increased timeout
+    const updated = await prisma.$transaction(
+      async (tx) => {
+        // Update lead
+        const updatedLead = await tx.lead.update({
+          where: { id },
+          data: {
+            currentStatusId: validated.newStatusId,
+            lastContactedAt: new Date(),
+          },
+          include: {
+            currentStatus: true,
+            assignedTo: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
           },
-        },
-      })
+        })
 
-      // Create activity log
-      await createActivityLog({
-        leadId: id,
-        agentId: session.user.id,
-        oldStatusId: lead.currentStatusId,
-        newStatusId: validated.newStatusId,
-        note: validated.note,
-      })
-
-      // Handle callback scheduling if status is "Scheduled Callback"
-      if (newStatus.name === 'Scheduled Callback' && body.scheduledDate) {
-        await tx.callback.create({
+        // Create activity log using transaction client
+        await tx.activityLog.create({
           data: {
             leadId: id,
-            scheduledDate: new Date(body.scheduledDate),
-            scheduledTime: body.scheduledTime || null,
-            notes: body.callbackNotes || null,
+            agentId: session.user.id,
+            oldStatusId: lead.currentStatusId,
+            newStatusId: validated.newStatusId,
+            note: validated.note || null,
+            isPrivate: false,
+            timestamp: new Date(),
           },
         })
-      }
 
-      return updatedLead
-    })
+        // Handle callback scheduling if status is "Scheduled Callback"
+        if (newStatus.name === 'Scheduled Callback' && body.scheduledDate) {
+          await tx.callback.create({
+            data: {
+              leadId: id,
+              scheduledDate: new Date(body.scheduledDate),
+              scheduledTime: body.scheduledTime || null,
+              notes: body.callbackNotes || null,
+            },
+          })
+        }
+
+        return updatedLead
+      },
+      {
+        maxWait: 10000, // Maximum time to wait for a transaction slot (10 seconds)
+        timeout: 15000, // Maximum time the transaction can run (15 seconds)
+      }
+    )
 
     return Response.json(updated)
   } catch (error) {

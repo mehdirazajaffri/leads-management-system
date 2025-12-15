@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { formatDateReadable, formatTime12Hour } from '@/lib/date-utils'
 
 export default async function AgentDashboard() {
   const session = await getServerSession(authOptions)
@@ -142,10 +143,10 @@ export default async function AgentDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-semibold text-slate-900">
-                      {new Date(cb.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {formatTime12Hour(cb.scheduledDate)}
                     </div>
                     <div className="text-xs text-slate-500 mt-1">
-                      {new Date(cb.scheduledDate).toLocaleDateString()}
+                      {formatDateReadable(cb.scheduledDate)}
                     </div>
                   </div>
                 </div>

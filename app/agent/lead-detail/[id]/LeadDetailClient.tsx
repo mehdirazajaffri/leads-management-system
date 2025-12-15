@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { formatDateReadable, formatTime12Hour } from '@/lib/date-utils'
 import { useToast } from '@/context/ToastContext'
 
 interface Lead {
@@ -236,7 +237,7 @@ export default function LeadDetailClient({
                 {lead.callbacks.map((callback) => (
                   <div key={callback.id} className="rounded-xl border border-slate-200 bg-white px-4 py-3">
                     <div className="text-sm font-semibold text-slate-900">
-                      {new Date(callback.scheduledDate).toLocaleDateString()}
+                      {formatDateReadable(callback.scheduledDate)}
                       {callback.scheduledTime ? ` at ${callback.scheduledTime}` : ''}
                     </div>
                     {callback.notes ? <div className="text-xs text-slate-500 mt-1">{callback.notes}</div> : null}
@@ -273,7 +274,7 @@ export default function LeadDetailClient({
                         {log.note ? <div className="text-sm text-slate-700 mt-2">{log.note}</div> : null}
                       </div>
                       <div className="text-xs text-slate-500 whitespace-nowrap">
-                        {new Date(log.timestamp).toLocaleString()}
+                        {formatDateReadable(log.timestamp)} {formatTime12Hour(log.timestamp)}
                       </div>
                     </div>
                   </div>

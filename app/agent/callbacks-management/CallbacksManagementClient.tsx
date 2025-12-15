@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
+import { formatDateReadable } from '@/lib/date-utils'
 import { useToast } from '@/context/ToastContext'
 
 interface Callback {
@@ -122,7 +123,7 @@ export default function CallbacksManagementClient() {
             sortValue: (r) => new Date(r.scheduledDate).getTime(),
             cell: (r) => (
               <span className="text-slate-600">
-                {new Date(r.scheduledDate).toLocaleDateString()}
+                {formatDateReadable(r.scheduledDate)}
                 {r.scheduledTime ? ` at ${r.scheduledTime}` : ''}
               </span>
             ),
@@ -154,7 +155,7 @@ export default function CallbacksManagementClient() {
 
         return (
           <DataTable
-            title="Datatable Simple"
+            title="Callbacks Management"
             subtitle="A lightweight, extendable, dependency-free javascript HTML table plugin."
             rows={callbacks}
             columns={columns}
