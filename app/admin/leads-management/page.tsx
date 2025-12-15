@@ -31,8 +31,8 @@ export default async function LeadsManagementPage() {
     ])
 
     return (
-      <div className="space-y-6 pl-0">
-        <h1 className="text-3xl font-bold">Leads Management</h1>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold text-black">Leads Management</h1>
         <LeadsManagementClient
           initialLeads={leads}
           agents={agents}
@@ -50,8 +50,8 @@ export default async function LeadsManagementPage() {
       msg.includes('P1002')
     ) {
       return (
-        <div className="space-y-6 pl-0">
-          <h1 className="text-3xl font-bold">Leads Management</h1>
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold text-black">Leads Management</h1>
           <DatabaseUnavailable details={msg} />
         </div>
       )

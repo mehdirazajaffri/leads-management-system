@@ -165,9 +165,9 @@ export default function DataTable<T>({
         </div>
       </div>
 
-      <div className="px-8 pb-6">
-        <div className="overflow-auto rounded-xl border border-slate-200 bg-white">
-          <table className="min-w-full">
+      <div className="px-0 pb-6">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+          <table className="w-full">
             <thead className="bg-white">
               <tr className="border-b border-slate-200">
                 {selectionEnabled ? (
@@ -183,10 +183,11 @@ export default function DataTable<T>({
                     <th
                       key={col.id}
                       className={[
-                        'px-6 py-4 text-left text-xs font-semibold uppercase tracking-widest text-slate-400',
+                        'px-4 py-4 text-left text-xs font-semibold uppercase tracking-widest text-slate-400',
                         col.headerClassName || '',
                         sortable ? 'select-none cursor-pointer' : '',
                       ].join(' ')}
+                      style={col.headerClassName?.includes('min-w-') ? {} : undefined}
                       onClick={() => {
                         if (!sortable) return
                         setSort((prev) => {
@@ -219,7 +220,7 @@ export default function DataTable<T>({
                       </td>
                     ) : null}
                     {columns.map((col) => (
-                      <td key={col.id} className={['px-6 py-4 text-sm text-slate-700', col.className || ''].join(' ')}>
+                      <td key={col.id} className={['px-4 py-4 text-sm text-slate-700', col.className || ''].join(' ')}>
                         {col.cell(row)}
                       </td>
                     ))}
@@ -241,7 +242,7 @@ export default function DataTable<T>({
           </table>
         </div>
 
-        <div className="mt-4 flex items-center justify-end gap-4 text-sm text-slate-600">
+        <div className="mt-4 px-6 flex items-center justify-end gap-4 text-sm text-slate-600">
           <div>
             Page <span className="font-semibold text-slate-900">{safePageIndex + 1}</span> of{' '}
             <span className="font-semibold text-slate-900">{pageCount}</span>

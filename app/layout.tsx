@@ -15,6 +15,14 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Leads Management System",
   description: "Manage leads, track conversions, and analyze performance",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.svg", sizes: "180x180", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({

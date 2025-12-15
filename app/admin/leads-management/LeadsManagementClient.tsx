@@ -47,7 +47,7 @@ export default function LeadsManagementClient({
   statuses: Status[]
 }) {
   const toast = useToast()
-  const [leads, setLeads] = useState(initialLeads)
+  const [leads] = useState(initialLeads)
   const [selectedLeads, setSelectedLeads] = useState<string[]>([])
   const [showUpload, setShowUpload] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -137,7 +137,7 @@ export default function LeadsManagementClient({
       } else {
         toast.error(`Error: ${data.message}`)
       }
-    } catch (error) {
+    } catch {
       toast.error('Upload failed')
     } finally {
       setUploading(false)
@@ -171,7 +171,7 @@ export default function LeadsManagementClient({
       } else {
         toast.error(`Error: ${data.message}`)
       }
-    } catch (error) {
+    } catch {
       toast.error('Assignment failed')
     }
   }
@@ -187,13 +187,13 @@ export default function LeadsManagementClient({
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setShowUpload(true)}
-              className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+              className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors shadow-sm"
             >
               Upload CSV
             </button>
             <a
               href="/api/admin/leads/export"
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition-colors"
             >
               Export CSV
             </a>
@@ -201,21 +201,21 @@ export default function LeadsManagementClient({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-4">
         <div className="card">
           <div className="card-header">
-            <div className="text-sm font-semibold text-slate-900">Filtering</div>
-            <div className="text-xs text-slate-500 mt-1">Agent, Status, Source, Campaign</div>
+            <div className="text-sm font-semibold text-slate-900">Filters</div>
+            <div className="text-xs text-slate-500 mt-1">Refine your search</div>
           </div>
-          <div className="card-body space-y-3">
+          <div className="card-body space-y-4">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Agent</div>
+              <label className="block text-xs font-medium text-slate-700 mb-2">Agent</label>
               <select
                 value={filters.agentId}
                 onChange={(e) => setFilters((f) => ({ ...f, agentId: e.target.value }))}
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
-                <option value="all">All</option>
+                <option value="all">All Agents</option>
                 <option value="unassigned">Unassigned</option>
                 {agents.map((a) => (
                   <option key={a.id} value={a.id}>
@@ -226,13 +226,13 @@ export default function LeadsManagementClient({
             </div>
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Status</div>
+              <label className="block text-xs font-medium text-slate-700 mb-2">Status</label>
               <select
                 value={filters.statusId}
                 onChange={(e) => setFilters((f) => ({ ...f, statusId: e.target.value }))}
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
-                <option value="all">All</option>
+                <option value="all">All Statuses</option>
                 {statuses.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -242,13 +242,13 @@ export default function LeadsManagementClient({
             </div>
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Source Platform</div>
+              <label className="block text-xs font-medium text-slate-700 mb-2">Source Platform</label>
               <select
                 value={filters.source}
                 onChange={(e) => setFilters((f) => ({ ...f, source: e.target.value }))}
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
-                <option value="all">All</option>
+                <option value="all">All Sources</option>
                 {sources.map((s) => (
                   <option key={s} value={s}>
                     {s}
@@ -258,13 +258,13 @@ export default function LeadsManagementClient({
             </div>
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Campaign</div>
+              <label className="block text-xs font-medium text-slate-700 mb-2">Campaign</label>
               <select
                 value={filters.campaign}
                 onChange={(e) => setFilters((f) => ({ ...f, campaign: e.target.value }))}
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
-                <option value="all">All</option>
+                <option value="all">All Campaigns</option>
                 {campaigns.map((c) => (
                   <option key={c} value={c}>
                     {c}
@@ -275,23 +275,83 @@ export default function LeadsManagementClient({
 
             <button
               onClick={() => setFilters({ agentId: 'all', statusId: 'all', source: 'all', campaign: 'all' })}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+              className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Reset Filters
             </button>
           </div>
         </div>
 
-        <div>
+        <div className="min-w-0">
           {(() => {
             const columns: DataTableColumn<Lead>[] = [
-              { id: 'name', header: 'NAME', sortValue: (r) => r.name, searchValue: (r) => `${r.name} ${r.email} ${r.phone}`, cell: (r) => <span className="font-semibold text-slate-900">{r.name}</span> },
-              { id: 'phone', header: 'PHONE', sortValue: (r) => r.phone, searchValue: (r) => r.phone, cell: (r) => <span className="text-slate-600">{r.phone}</span> },
-              { id: 'email', header: 'EMAIL', sortValue: (r) => r.email, searchValue: (r) => r.email, cell: (r) => <span className="text-slate-600">{r.email}</span> },
-              { id: 'source', header: 'SOURCE PLATFORM', sortValue: (r) => r.sourcePlatform, searchValue: (r) => r.sourcePlatform, cell: (r) => <span className="text-slate-600">{r.sourcePlatform}</span> },
-              { id: 'campaign', header: 'CAMPAIGN', sortValue: (r) => r.campaignName, searchValue: (r) => r.campaignName, cell: (r) => <span className="text-slate-600">{r.campaignName}</span> },
-              { id: 'status', header: 'CURRENT STATUS', sortValue: (r) => r.currentStatus.name, searchValue: (r) => r.currentStatus.name, cell: (r) => <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{r.currentStatus.name}</span> },
-              { id: 'assigned', header: 'ASSIGNED AGENT', sortValue: (r) => r.assignedTo?.name || '', searchValue: (r) => r.assignedTo?.name || 'Unassigned', cell: (r) => <span className="text-slate-600">{r.assignedTo?.name || 'Unassigned'}</span> },
+              { 
+                id: 'name', 
+                header: 'NAME', 
+                sortValue: (r) => r.name, 
+                searchValue: (r) => `${r.name} ${r.email} ${r.phone}`, 
+                cell: (r) => (
+                  <div className="min-w-[180px]">
+                    <div className="font-semibold text-slate-900 text-sm">{r.name}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{r.email}</div>
+                  </div>
+                ),
+                className: 'min-w-[200px]',
+                headerClassName: 'min-w-[200px]'
+              },
+              { 
+                id: 'phone', 
+                header: 'PHONE', 
+                sortValue: (r) => r.phone, 
+                searchValue: (r) => r.phone, 
+                cell: (r) => <span className="text-slate-700 text-sm font-mono">{r.phone}</span>,
+                className: 'min-w-[120px]',
+                headerClassName: 'min-w-[120px]'
+              },
+              { 
+                id: 'status', 
+                header: 'STATUS', 
+                sortValue: (r) => r.currentStatus.name, 
+                searchValue: (r) => r.currentStatus.name, 
+                cell: (r) => (
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 whitespace-nowrap">
+                    {r.currentStatus.name}
+                  </span>
+                ),
+                className: 'min-w-[130px]',
+                headerClassName: 'min-w-[130px]'
+              },
+              { 
+                id: 'assigned', 
+                header: 'ASSIGNED TO', 
+                sortValue: (r) => r.assignedTo?.name || '', 
+                searchValue: (r) => r.assignedTo?.name || 'Unassigned', 
+                cell: (r) => (
+                  <span className="text-slate-700 text-sm">
+                    {r.assignedTo?.name || <span className="text-slate-400 italic">Unassigned</span>}
+                  </span>
+                ),
+                className: 'min-w-[140px]',
+                headerClassName: 'min-w-[140px]'
+              },
+              { 
+                id: 'source', 
+                header: 'SOURCE', 
+                sortValue: (r) => r.sourcePlatform, 
+                searchValue: (r) => r.sourcePlatform, 
+                cell: (r) => <span className="text-slate-600 text-sm">{r.sourcePlatform}</span>,
+                className: 'min-w-[140px]',
+                headerClassName: 'min-w-[140px]'
+              },
+              { 
+                id: 'campaign', 
+                header: 'CAMPAIGN', 
+                sortValue: (r) => r.campaignName, 
+                searchValue: (r) => r.campaignName, 
+                cell: (r) => <span className="text-slate-600 text-sm">{r.campaignName}</span>,
+                className: 'min-w-[150px]',
+                headerClassName: 'min-w-[150px]'
+              },
             ]
 
             return (
@@ -310,15 +370,20 @@ export default function LeadsManagementClient({
       </div>
 
       {selectedLeads.length > 0 ? (
-        <div className="fixed bottom-4 left-4 right-4 z-40 xl:left-[calc(19.5rem+1rem)]">
-          <div className="card">
+        <div className="fixed bottom-6 left-6 right-6 z-40 lg:left-[calc(200px+2rem)] xl:left-[calc(290px+2rem)]">
+          <div className="card shadow-lg border-2 border-blue-200">
             <div className="card-body flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div className="text-sm font-semibold text-slate-900">{selectedLeads.length} Leads Selected</div>
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
+                  {selectedLeads.length}
+                </div>
+                <div className="text-sm font-semibold text-slate-900">Lead{selectedLeads.length > 1 ? 's' : ''} Selected</div>
+              </div>
               <div className="flex flex-wrap gap-2 items-center">
                 <select
                   value={assignAgentId}
                   onChange={(e) => setAssignAgentId(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Assign To…</option>
                   {agents.map((a) => (
@@ -329,13 +394,14 @@ export default function LeadsManagementClient({
                 </select>
                 <button
                   onClick={handleBulkAssign}
-                  className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  disabled={!assignAgentId}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  Assign Selected Leads
+                  Assign Selected
                 </button>
                 <button
                   onClick={() => setSelectedLeads([])}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   Clear
                 </button>

@@ -32,7 +32,7 @@ export default function AdminLayout({
         {/* Header */}
         <AppHeader />
         {/* Page Content */}
-        <div className="pt-4 pr-4 pb-4 pl-2 mx-auto max-w-7xl md:pt-6 md:pr-6 md:pb-6 md:pl-4">{children}</div>
+        <div className="pt-4 pr-6 pb-4 pl-6 md:pt-6 md:pb-6">{children}</div>
       </div>
     </div>
   );
