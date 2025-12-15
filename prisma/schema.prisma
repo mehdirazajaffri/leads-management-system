@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  leadsAssigned Lead[]
+  activityLogs ActivityLog[]
+  notes        Note[]
+
+  @@index([email])
+}
+
+model Status {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  isFinal     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  leads       Lead[]
+  oldActivityLogs ActivityLog[] @relation("OldStatus")
+  newActivityLogs ActivityLog[] @relation("NewStatus")
+
+  @@index([name])
+}
+
+model Lead {
+  id              String   @id @default(uuid())
+  name            String
+  phone           String
+  email           String
+  sourcePlatform  String
+  campaignName    String
+  assignedToId    String?
+  currentStatusId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lastContactedAt DateTime?
+  isArchived      Boolean  @default(false)
+  
+  assignedTo      User?    @relation(fields: [assignedToId], references: [id])
+  currentStatus   Status   @relation(fields: [currentStatusId], references: [id])
+  activityLogs    ActivityLog[]
+  callbacks       Callback[]
+  notes           Note[]
+
+  @@index([assignedToId])
+  @@index([currentStatusId])
+  @@index([sourcePlatform])
+  @@index([email])
+  @@index([phone])
+  @@index([createdAt])
+  @@index([isArchived])
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  timestamp   DateTime @default(now())
+  note        String?
+  oldStatusId String?
+  newStatusId String?
+  leadId      String
+  agentId     String
+  isPrivate   Boolean  @default(false)
+  
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  agent       User     @relation(fields: [agentId], references: [id])
+  oldStatus   Status?  @relation("OldStatus", fields: [oldStatusId], references: [id])
+  newStatus   Status?  @relation("NewStatus", fields: [newStatusId], references: [id])
+
+  @@index([leadId])
+  @@index([agentId])
+  @@index([timestamp])
+}
+
+model Callback {
+  id            String    @id @default(uuid())
+  leadId        String
+  scheduledDate DateTime
+  scheduledTime String?
+  notes         String?
+  completed     Boolean   @default(false)
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  lead          Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([scheduledDate])
+  @@index([completed])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  leadId    String
+  agentId   String
+  content   String
+  isPrivate Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  agent     User     @relation(fields: [agentId], references: [id])
+
+  @@index([leadId])
+  @@index([agentId])
+}
