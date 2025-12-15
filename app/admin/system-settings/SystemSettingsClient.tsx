@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useToast } from '@/context/ToastContext'
+import { useConfirm } from '@/hooks/useConfirm'
+import { ConfirmDialog } from '@/components/ui/confirm/ConfirmDialog'
 
 interface Status {
   id: string
@@ -13,6 +16,8 @@ export default function SystemSettingsClient({
 }: {
   initialStatuses: Status[]
 }) {
+  const toast = useToast()
+  const confirm = useConfirm()
   const [statuses, setStatuses] = useState(initialStatuses)
   const [showCreate, setShowCreate] = useState(false)
   const [formData, setFormData] = useState({
@@ -30,40 +35,59 @@ export default function SystemSettingsClient({
 
       const data = await res.json()
       if (res.ok) {
-        alert('Status created successfully')
+        toast.success('Status created successfully')
         setShowCreate(false)
         setFormData({ name: '', isFinal: false })
         window.location.reload()
       } else {
-        alert(`Error: ${data.message}`)
+        toast.error(`Error: ${data.message}`)
       }
     } catch (error) {
-      alert('Failed to create status')
+      toast.error('Failed to create status')
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this status?')) return
+    confirm.confirm({
+      title: 'Delete Status',
+      message: 'Are you sure you want to delete this status? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'danger',
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/admin/settings?type=status&id=${id}`, {
+            method: 'DELETE',
+          })
 
-    try {
-      const res = await fetch(`/api/admin/settings?type=status&id=${id}`, {
-        method: 'DELETE',
-      })
-
-      if (res.ok) {
-        alert('Status deleted successfully')
-        window.location.reload()
-      } else {
-        const data = await res.json()
-        alert(`Error: ${data.message}`)
-      }
-    } catch (error) {
-      alert('Failed to delete status')
-    }
+          if (res.ok) {
+            toast.success('Status deleted successfully')
+            window.location.reload()
+          } else {
+            const data = await res.json()
+            toast.error(`Error: ${data.message}`)
+          }
+        } catch (error) {
+          toast.error('Failed to delete status')
+        }
+      },
+    })
   }
 
   return (
-    <div className="space-y-6">
+    <>
+      <ConfirmDialog
+        isOpen={confirm.isOpen}
+        onClose={confirm.handleCancel}
+        onConfirm={confirm.handleConfirm}
+        title={confirm.options?.title}
+        message={confirm.options?.message || ''}
+        confirmText={confirm.options?.confirmText}
+        cancelText={confirm.options?.cancelText}
+        variant={confirm.options?.variant}
+        loading={confirm.loading}
+      />
+      <div className="space-y-6">
       <div className="card">
         <div className="card-body flex items-center justify-between">
           <div>
@@ -136,7 +160,8 @@ export default function SystemSettingsClient({
           ))}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

@@ -20,7 +20,12 @@ export default function GlobalError({
     message.includes("Can't reach database server") ||
     message.includes('Connection terminated due to connection timeout') ||
     message.includes('ECONNREFUSED') ||
-    message.includes('ETIMEDOUT')
+    message.includes('ETIMEDOUT') ||
+    message.includes('db.prisma.io') ||
+    message.includes('P1001') ||
+    message.includes('P1002') ||
+    message.includes('P1003') ||
+    message.includes('P1017')
 
   if (looksLikeDbDown) {
     return (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
+import { useToast } from '@/context/ToastContext'
 
 interface Callback {
   id: string
@@ -18,6 +19,7 @@ interface Callback {
 }
 
 export default function CallbacksManagementClient() {
+  const toast = useToast()
   const [callbacks, setCallbacks] = useState<Callback[]>([])
   const [filter, setFilter] = useState<'upcoming' | 'overdue' | 'completed'>('upcoming')
   const [loading, setLoading] = useState(true)
@@ -50,10 +52,14 @@ export default function CallbacksManagementClient() {
       })
 
       if (res.ok) {
+        toast.success('Callback marked as completed')
         fetchCallbacks()
+      } else {
+        const data = await res.json()
+        toast.error(data.message || 'Failed to mark callback as completed')
       }
     } catch (error) {
-      alert('Failed to mark callback as completed')
+      toast.error('Failed to mark callback as completed')
     }
   }
 

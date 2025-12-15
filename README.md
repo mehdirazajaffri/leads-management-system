@@ -195,6 +195,78 @@ CLEAR_DB=true npm run db:seed
 - Efficient Prisma queries
 - Server-side rendering with React Server Components
 
+## Troubleshooting
+
+### Database Connection Issues
+
+If you're seeing "Can't reach database server" errors:
+
+#### For Prisma Accelerate (db.prisma.io)
+
+1. **Check if database is paused**: Free tier Prisma Accelerate databases pause after inactivity
+   - Visit your [Prisma Dashboard](https://console.prisma.io/)
+   - Check if your database is paused and resume it if needed
+
+2. **Verify connection string**: 
+   - Ensure your `DATABASE_URL` in `.env` matches the connection string from Prisma Dashboard
+   - Connection string format: `postgres://user:password@db.prisma.io:5432/database?sslmode=require`
+
+3. **Check IP whitelist**: If IP restrictions are enabled, ensure your IP is whitelisted
+
+4. **Test connection**:
+   ```bash
+   psql "your-database-url-here"
+   ```
+
+#### For Local PostgreSQL
+
+1. **Verify PostgreSQL is running**:
+   ```bash
+   # macOS
+   brew services list | grep postgresql
+   
+   # Linux
+   sudo systemctl status postgresql
+   ```
+
+2. **Check connection string format**:
+   ```
+   postgresql://username:password@localhost:5432/database_name
+   ```
+
+3. **Test connection**:
+   ```bash
+   psql -h localhost -U your_username -d your_database
+   ```
+
+4. **Common issues**:
+   - Wrong port (default is 5432)
+   - Firewall blocking port 5432
+   - Incorrect credentials
+   - Database doesn't exist (create it first)
+   - Missing SSL parameters (add `?sslmode=require` if needed)
+
+#### General Troubleshooting Steps
+
+1. **Verify `.env` file exists** and contains `DATABASE_URL`
+2. **Restart the development server** after changing `.env`
+3. **Check network connectivity** (VPN, firewall, etc.)
+4. **Review error messages** - they often contain specific connection details
+5. **Check Prisma logs** - enable query logging in development to see connection attempts
+
+#### Error Handling
+
+The app includes automatic error handling for database connection issues:
+- Connection errors are caught and displayed with helpful messages
+- The app won't crash - it shows a "Database Unavailable" component
+- Error messages include specific troubleshooting steps
+
+If you continue to have issues:
+1. Check the browser console for detailed error messages
+2. Review server logs for connection attempts
+3. Verify your database server is accessible from your network
+4. Consider using a different database provider if Prisma Accelerate continues to have issues
+
 ## License
 
 MIT

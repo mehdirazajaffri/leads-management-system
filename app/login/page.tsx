@@ -63,7 +63,8 @@ export default function LoginPage() {
               </div>
             </div>
             <div className="text-xs text-slate-400">
-              Tip: If login fails, confirm <span className="font-mono">DATABASE_URL</span> and <span className="font-mono">NEXTAUTH_SECRET</span> are set.
+              <br />
+              Copyright © 2025 Platinum Healthcare. All rights reserved.
             </div>
           </div>
         </div>

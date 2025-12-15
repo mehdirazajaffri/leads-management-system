@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useToast } from '@/context/ToastContext'
 
 interface Lead {
   id: string
@@ -47,6 +48,7 @@ export default function LeadDetailClient({
   activityLogs: ActivityLog[]
   statuses: Status[]
 }) {
+  const toast = useToast()
   const router = useRouter()
   const [selectedStatus, setSelectedStatus] = useState(lead.currentStatus.id)
   const [note, setNote] = useState('')
@@ -75,13 +77,13 @@ export default function LeadDetailClient({
 
       const data = await res.json()
       if (res.ok) {
-        alert('Saved successfully')
+        toast.success('Saved successfully')
         router.refresh()
       } else {
-        alert(`Error: ${data.message}`)
+        toast.error(`Error: ${data.message}`)
       }
     } catch (error) {
-      alert('Failed to update status')
+      toast.error('Failed to update status')
     } finally {
       setUpdating(false)
     }

@@ -62,12 +62,13 @@ export async function POST(req: NextRequest) {
     // Hash password
     const passwordHash = await bcrypt.hash(validated.password, 10)
 
+    // Always set role to AGENT for agent creation (ignore any role in request)
     const agent = await prisma.user.create({
       data: {
         email: validated.email,
         passwordHash,
         name: validated.name,
-        role: 'AGENT',
+        role: 'AGENT', // Always AGENT for agent creation endpoint
       },
       select: {
         id: true,

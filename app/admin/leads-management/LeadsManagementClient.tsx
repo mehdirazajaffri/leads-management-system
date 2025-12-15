@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
 import Modal from '@/components/features/Modal'
+import { useToast } from '@/context/ToastContext'
 
 interface Lead {
   id: string
@@ -45,6 +46,7 @@ export default function LeadsManagementClient({
   agents: Agent[]
   statuses: Status[]
 }) {
+  const toast = useToast()
   const [leads, setLeads] = useState(initialLeads)
   const [selectedLeads, setSelectedLeads] = useState<string[]>([])
   const [showUpload, setShowUpload] = useState(false)
@@ -105,10 +107,10 @@ export default function LeadsManagementClient({
         setPreviewRows((data.preview || []) as CSVRow[])
         setPreviewErrors((data.validationErrors || []) as ValidationErrorRow[])
       } else {
-        alert(`Error: ${data.message}`)
+        toast.error(`Error: ${data.message}`)
       }
     } catch {
-      alert('Failed to generate preview')
+      toast.error('Failed to generate preview')
     } finally {
       setPreviewLoading(false)
     }
@@ -130,13 +132,13 @@ export default function LeadsManagementClient({
 
       const data = await res.json()
       if (res.ok) {
-        alert(`Successfully imported ${data.imported} leads`)
+        toast.success(`Successfully imported ${data.imported} leads`)
         window.location.reload()
       } else {
-        alert(`Error: ${data.message}`)
+        toast.error(`Error: ${data.message}`)
       }
     } catch (error) {
-      alert('Upload failed')
+      toast.error('Upload failed')
     } finally {
       setUploading(false)
       setFile(null)
@@ -146,12 +148,12 @@ export default function LeadsManagementClient({
 
   const handleBulkAssign = async () => {
     if (selectedLeads.length === 0) {
-      alert('Please select leads to assign')
+      toast.warning('Please select leads to assign')
       return
     }
 
     if (!assignAgentId) {
-      alert('Please select an agent')
+      toast.warning('Please select an agent')
       return
     }
 
@@ -164,13 +166,13 @@ export default function LeadsManagementClient({
 
       const data = await res.json()
       if (res.ok) {
-        alert(`Successfully assigned ${data.updated} leads`)
+        toast.success(`Successfully assigned ${data.updated} leads`)
         window.location.reload()
       } else {
-        alert(`Error: ${data.message}`)
+        toast.error(`Error: ${data.message}`)
       }
     } catch (error) {
-      alert('Assignment failed')
+      toast.error('Assignment failed')
     }
   }
 
