@@ -57,90 +57,103 @@ export default function CallbacksManagementClient() {
   }
 
   if (loading) {
-    return <p>Loading...</p>
+    return (
+      <div className="card">
+        <div className="card-body text-sm text-slate-600">Loading callbacks…</div>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
+    <div className="space-y-6">
+      <div className="card">
+        <div className="card-body flex flex-wrap gap-2">
         <button
           onClick={() => setFilter('upcoming')}
-          className={`px-4 py-2 rounded ${
-            filter === 'upcoming' ? 'bg-indigo-600 text-white' : 'bg-gray-200'
+          className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+            filter === 'upcoming' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-900'
           }`}
         >
           Upcoming
         </button>
         <button
           onClick={() => setFilter('overdue')}
-          className={`px-4 py-2 rounded ${
-            filter === 'overdue' ? 'bg-indigo-600 text-white' : 'bg-gray-200'
+          className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+            filter === 'overdue' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-900'
           }`}
         >
           Overdue
         </button>
         <button
           onClick={() => setFilter('completed')}
-          className={`px-4 py-2 rounded ${
-            filter === 'completed' ? 'bg-indigo-600 text-white' : 'bg-gray-200'
+          className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+            filter === 'completed' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-900'
           }`}
         >
           Completed
         </button>
       </div>
+      </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="card overflow-hidden">
+        <div className="card-header">
+          <div className="text-sm font-semibold text-slate-900">Callbacks</div>
+          <div className="text-xs text-slate-500 mt-1">{callbacks.length} items</div>
+        </div>
+        <div className="overflow-auto">
+        <table className="min-w-full">
+          <thead className="bg-slate-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Lead
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Scheduled Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Notes
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-200 bg-white">
             {callbacks.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                <td colSpan={4} className="px-6 py-10 text-center text-slate-500">
                   No callbacks found
                 </td>
               </tr>
             ) : (
               callbacks.map((callback) => (
-                <tr key={callback.id}>
+                <tr key={callback.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{callback.lead.name}</p>
-                      <p className="text-sm text-gray-500">{callback.lead.email}</p>
+                      <p className="text-sm font-semibold text-slate-900">{callback.lead.name}</p>
+                      <p className="text-xs text-slate-500 mt-1">{callback.lead.email}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                     {new Date(callback.scheduledDate).toLocaleDateString()}
                     {callback.scheduledTime && ` at ${callback.scheduledTime}`}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-slate-600">
                     {callback.notes || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {!callback.completed && (
                       <button
                         onClick={() => handleComplete(callback.id)}
-                        className="text-green-600 hover:text-green-800"
+                        className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
                       >
                         Mark Complete
                       </button>
                     )}
                     {callback.completed && (
-                      <span className="text-gray-500">Completed</span>
+                      <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                        Completed
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -148,6 +161,7 @@ export default function CallbacksManagementClient() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

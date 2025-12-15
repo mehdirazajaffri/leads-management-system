@@ -22,57 +22,78 @@ export default async function AnalyticsDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
+      <div>
+        <div className="text-xs uppercase tracking-widest text-slate-500">Insights</div>
+        <h1 className="mt-1 text-3xl font-semibold text-slate-900">Analytics Dashboard</h1>
+      </div>
 
       {/* Conversion Rate by Agent */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Conversion Rate by Agent</h2>
-        <div className="space-y-2">
+      <div className="card">
+        <div className="card-header">
+          <h2 className="text-lg font-semibold text-slate-900">Conversion Rate by Agent</h2>
+          <p className="mt-1 text-sm text-slate-500">Converted leads divided by total assigned leads.</p>
+        </div>
+        <div className="card-body space-y-3">
           {conversionRates.map((rate) => (
-            <div key={rate.agentId} className="flex justify-between items-center border-b pb-2">
+            <div
+              key={rate.agentId}
+              className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3"
+            >
               <div>
-                <p className="font-medium">{rate.agentName}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm font-semibold text-slate-900">{rate.agentName}</p>
+                <p className="text-xs text-slate-500 mt-1">
                   {rate.convertedLeads} / {rate.totalLeads} leads
                 </p>
               </div>
-              <p className="text-lg font-bold">{rate.conversionRate.toFixed(1)}%</p>
+              <p className="text-lg font-semibold text-slate-900">{rate.conversionRate.toFixed(1)}%</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Leads by Source Platform */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Leads by Source Platform</h2>
-        <div className="space-y-2">
+      <div className="card">
+        <div className="card-header">
+          <h2 className="text-lg font-semibold text-slate-900">Leads by Source Platform</h2>
+          <p className="mt-1 text-sm text-slate-500">Conversion by acquisition channel.</p>
+        </div>
+        <div className="card-body space-y-3">
           {sourcePlatforms.map((platform) => (
-            <div key={platform.sourcePlatform} className="flex justify-between items-center border-b pb-2">
+            <div
+              key={platform.sourcePlatform}
+              className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3"
+            >
               <div>
-                <p className="font-medium">{platform.sourcePlatform}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm font-semibold text-slate-900">{platform.sourcePlatform}</p>
+                <p className="text-xs text-slate-500 mt-1">
                   {platform.convertedLeads} / {platform.totalLeads} leads
                 </p>
               </div>
-              <p className="text-lg font-bold">{platform.conversionRate.toFixed(1)}%</p>
+              <p className="text-lg font-semibold text-slate-900">{platform.conversionRate.toFixed(1)}%</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Campaign Performance */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Campaign Performance</h2>
-        <div className="space-y-2">
+      <div className="card">
+        <div className="card-header">
+          <h2 className="text-lg font-semibold text-slate-900">Campaign Performance</h2>
+          <p className="mt-1 text-sm text-slate-500">Conversions by campaign.</p>
+        </div>
+        <div className="card-body space-y-3">
           {campaigns.map((campaign) => (
-            <div key={campaign.campaignName} className="flex justify-between items-center border-b pb-2">
+            <div
+              key={campaign.campaignName}
+              className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3"
+            >
               <div>
-                <p className="font-medium">{campaign.campaignName}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm font-semibold text-slate-900">{campaign.campaignName}</p>
+                <p className="text-xs text-slate-500 mt-1">
                   {campaign.convertedLeads} / {campaign.totalLeads} leads
                 </p>
               </div>
-              <p className="text-lg font-bold">{campaign.conversionRate.toFixed(1)}%</p>
+              <p className="text-lg font-semibold text-slate-900">{campaign.conversionRate.toFixed(1)}%</p>
             </div>
           ))}
         </div>

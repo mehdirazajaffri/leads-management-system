@@ -97,65 +97,85 @@ export default function LeadsManagementClient({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowUpload(!showUpload)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-          >
-            Upload CSV
-          </button>
-          {selectedLeads.length > 0 && (
+    <div className="space-y-6">
+      <div className="card">
+        <div className="card-body flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-widest text-slate-500">Leads</div>
+            <div className="mt-1 text-lg font-semibold text-slate-900">Manage, import, assign</div>
+          </div>
+          <div className="flex flex-wrap gap-2">
             <button
-              onClick={handleBulkAssign}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              onClick={() => setShowUpload(!showUpload)}
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
             >
-              Assign Selected ({selectedLeads.length})
+              Upload CSV
             </button>
-          )}
+            {selectedLeads.length > 0 && (
+              <button
+                onClick={handleBulkAssign}
+                className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              >
+                Assign Selected ({selectedLeads.length})
+              </button>
+            )}
+            <a
+              href="/api/admin/leads/export"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+            >
+              Export CSV
+            </a>
+          </div>
         </div>
-        <a
-          href="/api/admin/leads/export"
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-        >
-          Export CSV
-        </a>
       </div>
 
       {showUpload && (
-        <div className="bg-white p-4 rounded-lg shadow border">
-          <h3 className="font-bold mb-2">Upload CSV File</h3>
-          <input
-            type="file"
-            accept=".csv"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="mb-2"
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={handleFileUpload}
-              disabled={!file || uploading}
-              className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {uploading ? 'Uploading...' : 'Upload'}
-            </button>
-            <button
-              onClick={() => {
-                setShowUpload(false)
-                setFile(null)
-              }}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
+        <div className="card">
+          <div className="card-header">
+            <h3 className="text-lg font-semibold text-slate-900">Upload CSV</h3>
+            <p className="mt-1 text-sm text-slate-500">
+              Required headers: <span className="font-mono">Name, Phone, Email, Source Platform, Campaign Name</span>
+            </p>
+          </div>
+          <div className="card-body space-y-3">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="block w-full text-sm text-slate-700 file:mr-4 file:rounded-lg file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={handleFileUpload}
+                disabled={!file || uploading}
+                className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+              >
+                {uploading ? 'Uploading…' : 'Upload'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowUpload(false)
+                  setFile(null)
+                }}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="card overflow-hidden">
+        <div className="card-header flex items-center justify-between">
+          <div>
+            <div className="text-sm font-semibold text-slate-900">Leads</div>
+            <div className="text-xs text-slate-500">{leads.length} shown</div>
+          </div>
+        </div>
+        <div className="overflow-auto">
+          <table className="min-w-full">
+            <thead className="bg-slate-50">
             <tr>
               <th className="px-6 py-3 text-left">
                 <input
@@ -169,29 +189,29 @@ export default function LeadsManagementClient({
                   }}
                 />
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Phone
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Assigned To
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
                 Source
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-200 bg-white">
             {leads.map((lead) => (
-              <tr key={lead.id}>
+              <tr key={lead.id} className="hover:bg-slate-50">
                 <td className="px-6 py-4">
                   <input
                     type="checkbox"
@@ -205,28 +225,31 @@ export default function LeadsManagementClient({
                     }}
                   />
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
                   {lead.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                   {lead.email}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                   {lead.phone}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {lead.currentStatus.name}
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                    {lead.currentStatus.name}
+                  </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                   {lead.assignedTo?.name || 'Unassigned'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                   {lead.sourcePlatform}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

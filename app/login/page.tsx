@@ -38,67 +38,95 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-md">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Leads Management System
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your account
-          </p>
+    <div className="min-h-screen app-surface flex items-center justify-center px-4">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        {/* Left marketing panel (Material Dashboard vibe) */}
+        <div className="hidden lg:flex rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white p-10 shadow-xl border border-slate-700/50">
+          <div className="flex flex-col justify-between w-full">
+            <div>
+              <div className="text-xs tracking-widest uppercase text-slate-300">Leads</div>
+              <h1 className="mt-3 text-3xl font-semibold leading-tight">
+                Leads Management System
+              </h1>
+              <p className="mt-3 text-slate-300">
+                Upload, assign, track status changes, and monitor conversion performance—cleanly and fast.
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+                  <div className="text-sm font-semibold">Admin</div>
+                  <div className="text-xs text-slate-300 mt-1">CSV import, assignment, analytics</div>
+                </div>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+                  <div className="text-sm font-semibold">Agent</div>
+                  <div className="text-xs text-slate-300 mt-1">Lead pipeline + callbacks</div>
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-slate-400">
+              Tip: If login fails, confirm <span className="font-mono">DATABASE_URL</span> and <span className="font-mono">NEXTAUTH_SECRET</span> are set.
+            </div>
+          </div>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
+        {/* Right login card */}
+        <div className="card rounded-2xl">
+          <div className="card-header">
+            <div className="text-xs uppercase tracking-wide text-slate-500">Welcome back</div>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-900">Sign in</h2>
+            <p className="mt-1 text-sm text-slate-500">Use your email and password.</p>
           </div>
-        </form>
+          <div className="card-body">
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Signing in…' : 'Sign in'}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   )

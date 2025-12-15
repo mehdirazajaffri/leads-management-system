@@ -63,28 +63,31 @@ export default function SystemSettingsClient({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Status Management</h2>
+    <div className="space-y-6">
+      <div className="card">
+        <div className="card-body flex items-center justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-widest text-slate-500">Settings</div>
+            <h2 className="mt-1 text-lg font-semibold text-slate-900">Status Management</h2>
+          </div>
           <button
             onClick={() => setShowCreate(!showCreate)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
           >
             Create Status
           </button>
         </div>
 
         {showCreate && (
-          <div className="mb-4 p-4 border rounded">
-            <h3 className="font-bold mb-2">Create New Status</h3>
-            <div className="space-y-2">
+          <div className="mx-6 mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <h3 className="text-sm font-semibold text-slate-900">Create New Status</h3>
+            <div className="mt-3 space-y-2">
               <input
                 type="text"
                 placeholder="Status Name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <label className="flex items-center">
                 <input
@@ -93,12 +96,12 @@ export default function SystemSettingsClient({
                   onChange={(e) => setFormData({ ...formData, isFinal: e.target.checked })}
                   className="mr-2"
                 />
-                Final Status (Converted/Not Converted)
+                <span className="text-sm text-slate-700">Final Status (Converted/Not Converted)</span>
               </label>
               <div className="flex gap-2">
                 <button
                   onClick={handleCreate}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
                 >
                   Create
                 </button>
@@ -107,7 +110,7 @@ export default function SystemSettingsClient({
                     setShowCreate(false)
                     setFormData({ name: '', isFinal: false })
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
@@ -116,18 +119,16 @@ export default function SystemSettingsClient({
           </div>
         )}
 
-        <div className="space-y-2">
+        <div className="px-6 pb-6 space-y-2">
           {statuses.map((status) => (
-            <div key={status.id} className="flex justify-between items-center border-b pb-2">
+            <div key={status.id} className="flex justify-between items-center rounded-xl border border-slate-200 bg-white px-4 py-3">
               <div>
-                <p className="font-medium">{status.name}</p>
-                <p className="text-sm text-gray-500">
-                  {status.isFinal ? 'Final Status' : 'Intermediate Status'}
-                </p>
+                <p className="text-sm font-semibold text-slate-900">{status.name}</p>
+                <p className="text-xs text-slate-500 mt-1">{status.isFinal ? 'Final Status' : 'Intermediate Status'}</p>
               </div>
               <button
                 onClick={() => handleDelete(status.id)}
-                className="text-red-600 hover:text-red-800"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
               >
                 Delete
               </button>

@@ -63,45 +63,68 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+      <div className="flex items-end justify-between">
+        <div>
+          <div className="text-xs uppercase tracking-widest text-slate-500">Overview</div>
+          <h1 className="mt-1 text-3xl font-semibold text-slate-900">Admin Dashboard</h1>
+        </div>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Total Leads</h3>
-          <p className="text-2xl font-bold mt-2">{totalLeads}</p>
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">Total Leads</div>
+            <div className="mt-2 text-3xl font-semibold text-slate-900">{totalLeads}</div>
+            <div className="mt-2 h-1 w-12 rounded-full bg-indigo-500/70" />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Assigned Leads</h3>
-          <p className="text-2xl font-bold mt-2">{assignedLeads}</p>
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">Assigned</div>
+            <div className="mt-2 text-3xl font-semibold text-slate-900">{assignedLeads}</div>
+            <div className="mt-2 h-1 w-12 rounded-full bg-emerald-500/70" />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Active Agents</h3>
-          <p className="text-2xl font-bold mt-2">{agents}</p>
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">Active Agents</div>
+            <div className="mt-2 text-3xl font-semibold text-slate-900">{agents}</div>
+            <div className="mt-2 h-1 w-12 rounded-full bg-slate-500/60" />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Conversion Rate</h3>
-          <p className="text-2xl font-bold mt-2">{conversionRate}%</p>
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">Conversion</div>
+            <div className="mt-2 text-3xl font-semibold text-slate-900">{conversionRate}%</div>
+            <div className="mt-2 h-1 w-12 rounded-full bg-fuchsia-500/70" />
+          </div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-        <div className="space-y-2">
+      <div className="card">
+        <div className="card-header flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-900">Recent Activity</h2>
+          <div className="text-xs text-slate-500">Latest status changes</div>
+        </div>
+        <div className="card-body space-y-3">
           {recentActivity.length === 0 ? (
-            <p className="text-gray-500">No recent activity</p>
+            <p className="text-slate-500">No recent activity</p>
           ) : (
             recentActivity.map((activity) => (
-              <div key={activity.id} className="border-b pb-2">
-                <p className="text-sm">
-                  <span className="font-medium">{activity.agent.name}</span> updated{' '}
-                  <span className="font-medium">{activity.lead.name}</span> to{' '}
-                  <span className="font-medium">{activity.newStatus?.name || 'N/A'}</span>
-                </p>
-                <p className="text-xs text-gray-500">
-                  {new Date(activity.timestamp).toLocaleString()}
-                </p>
+              <div key={activity.id} className="flex items-start justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                <div>
+                  <div className="text-sm text-slate-900">
+                    <span className="font-semibold">{activity.agent.name}</span>{' '}
+                    <span className="text-slate-500">updated</span>{' '}
+                    <span className="font-semibold">{activity.lead.name}</span>{' '}
+                    <span className="text-slate-500">to</span>{' '}
+                    <span className="font-semibold">{activity.newStatus?.name || 'N/A'}</span>
+                  </div>
+                  <div className="mt-1 text-xs text-slate-500">{new Date(activity.timestamp).toLocaleString()}</div>
+                </div>
+                <div className="mt-0.5 h-2 w-2 rounded-full bg-indigo-500/70" />
               </div>
             ))
           )}
@@ -109,30 +132,33 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="card">
+        <div className="card-header">
+          <h2 className="text-lg font-semibold text-slate-900">Quick Actions</h2>
+          <p className="text-sm text-slate-500 mt-1">Jump to the most common admin tasks.</p>
+        </div>
+        <div className="card-body grid grid-cols-2 md:grid-cols-4 gap-4">
           <a
             href="/admin/leads-management"
-            className="p-4 border rounded-lg hover:bg-gray-50 text-center"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-center text-sm font-medium text-slate-900 hover:bg-slate-50"
           >
             Manage Leads
           </a>
           <a
             href="/admin/agents-management"
-            className="p-4 border rounded-lg hover:bg-gray-50 text-center"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-center text-sm font-medium text-slate-900 hover:bg-slate-50"
           >
             Manage Agents
           </a>
           <a
             href="/admin/analytics-dashboard"
-            className="p-4 border rounded-lg hover:bg-gray-50 text-center"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-center text-sm font-medium text-slate-900 hover:bg-slate-50"
           >
             View Analytics
           </a>
           <a
             href="/admin/system-settings"
-            className="p-4 border rounded-lg hover:bg-gray-50 text-center"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-center text-sm font-medium text-slate-900 hover:bg-slate-50"
           >
             Settings
           </a>
