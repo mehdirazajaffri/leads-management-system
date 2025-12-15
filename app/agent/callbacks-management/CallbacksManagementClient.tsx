@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
 
 interface Callback {
   id: string
@@ -95,74 +96,66 @@ export default function CallbacksManagementClient() {
       </div>
       </div>
 
-      <div className="card overflow-hidden">
-        <div className="card-header">
-          <div className="text-sm font-semibold text-slate-900">Callbacks</div>
-          <div className="text-xs text-slate-500 mt-1">{callbacks.length} items</div>
-        </div>
-        <div className="overflow-auto">
-        <table className="min-w-full">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Lead
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Scheduled Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Notes
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 bg-white">
-            {callbacks.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-10 text-center text-slate-500">
-                  No callbacks found
-                </td>
-              </tr>
-            ) : (
-              callbacks.map((callback) => (
-                <tr key={callback.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">{callback.lead.name}</p>
-                      <p className="text-xs text-slate-500 mt-1">{callback.lead.email}</p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                    {new Date(callback.scheduledDate).toLocaleDateString()}
-                    {callback.scheduledTime && ` at ${callback.scheduledTime}`}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    {callback.notes || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    {!callback.completed && (
-                      <button
-                        onClick={() => handleComplete(callback.id)}
-                        className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
-                      >
-                        Mark Complete
-                      </button>
-                    )}
-                    {callback.completed && (
-                      <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                        Completed
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        </div>
-      </div>
+      {(() => {
+        const columns: DataTableColumn<Callback>[] = [
+          {
+            id: 'lead',
+            header: 'NAME',
+            sortValue: (r) => r.lead.name,
+            searchValue: (r) => `${r.lead.name} ${r.lead.email} ${r.lead.phone}`,
+            cell: (r) => (
+              <div>
+                <div className="font-semibold text-slate-900">{r.lead.name}</div>
+                <div className="text-xs text-slate-500 mt-1">{r.lead.email}</div>
+              </div>
+            ),
+          },
+          {
+            id: 'date',
+            header: 'START DATE',
+            sortValue: (r) => new Date(r.scheduledDate).getTime(),
+            cell: (r) => (
+              <span className="text-slate-600">
+                {new Date(r.scheduledDate).toLocaleDateString()}
+                {r.scheduledTime ? ` at ${r.scheduledTime}` : ''}
+              </span>
+            ),
+          },
+          {
+            id: 'notes',
+            header: 'OFFICE',
+            searchValue: (r) => r.notes || '',
+            cell: (r) => <span className="text-slate-600">{r.notes || '-'}</span>,
+          },
+          {
+            id: 'actions',
+            header: '',
+            cell: (r) =>
+              r.completed ? (
+                <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                  Completed
+                </span>
+              ) : (
+                <button
+                  onClick={() => handleComplete(r.id)}
+                  className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                >
+                  Mark Complete
+                </button>
+              ),
+          },
+        ]
+
+        return (
+          <DataTable
+            title="Datatable Simple"
+            subtitle="A lightweight, extendable, dependency-free javascript HTML table plugin."
+            rows={callbacks}
+            columns={columns}
+            getRowId={(r) => r.id}
+          />
+        )
+      })()}
     </div>
   )
 }

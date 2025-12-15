@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
 
 export default async function AssignedLeadsPage() {
   const session = await getServerSession(authOptions)
@@ -29,79 +30,63 @@ export default async function AssignedLeadsPage() {
         <h1 className="mt-1 text-3xl font-semibold text-slate-900">My Assigned Leads</h1>
       </div>
 
-      <div className="card overflow-hidden">
-        <div className="card-header flex items-center justify-between">
-          <div>
-            <div className="text-sm font-semibold text-slate-900">Leads</div>
-            <div className="text-xs text-slate-500 mt-1">{leads.length} leads</div>
-          </div>
-        </div>
-        <div className="overflow-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Phone
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Source
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 bg-white">
-            {leads.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-10 text-center text-slate-500">
-                  No assigned leads
-                </td>
-              </tr>
-            ) : (
-              leads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
-                    {lead.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                    {lead.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                    {lead.phone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                      {lead.currentStatus.name}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                    {lead.sourcePlatform}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <Link
-                      href={`/agent/lead-detail/${lead.id}`}
-                      className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-900 hover:bg-slate-50"
-                    >
-                      View
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        </div>
-      </div>
+      {(() => {
+        const columns: DataTableColumn<(typeof leads)[number]>[] = [
+          {
+            id: 'name',
+            header: 'NAME',
+            sortValue: (r) => r.name,
+            searchValue: (r) => `${r.name} ${r.email} ${r.phone}`,
+            cell: (r) => <span className="font-semibold text-slate-900">{r.name}</span>,
+          },
+          {
+            id: 'status',
+            header: 'STATUS',
+            sortValue: (r) => r.currentStatus.name,
+            searchValue: (r) => r.currentStatus.name,
+            cell: (r) => (
+              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                {r.currentStatus.name}
+              </span>
+            ),
+          },
+          {
+            id: 'source',
+            header: 'OFFICE',
+            sortValue: (r) => r.sourcePlatform,
+            searchValue: (r) => r.sourcePlatform,
+            cell: (r) => <span className="text-slate-600">{r.sourcePlatform}</span>,
+          },
+          {
+            id: 'start',
+            header: 'START DATE',
+            sortValue: (r) => new Date(r.createdAt).getTime(),
+            cell: (r) => <span className="text-slate-600">{new Date(r.createdAt).toLocaleDateString()}</span>,
+          },
+          {
+            id: 'actions',
+            header: '',
+            cell: (r) => (
+              <Link
+                href={`/agent/lead-detail/${r.id}`}
+                className="text-xs font-semibold text-slate-700 hover:text-slate-900"
+              >
+                Edit
+              </Link>
+            ),
+          },
+        ]
+
+        return (
+          <DataTable
+            title="Datatable Simple"
+            subtitle="A lightweight, extendable, dependency-free javascript HTML table plugin."
+            rows={leads}
+            columns={columns}
+            getRowId={(r) => r.id}
+          />
+        )
+      })()}
     </div>
   )
 }

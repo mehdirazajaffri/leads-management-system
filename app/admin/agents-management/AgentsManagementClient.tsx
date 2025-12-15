@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
 
 interface Agent {
   id: string
@@ -132,57 +133,56 @@ export default function AgentsManagementClient({
         </div>
       )}
 
-      <div className="card overflow-hidden">
-        <div className="card-header">
-          <div className="text-sm font-semibold text-slate-900">Agents</div>
-          <div className="text-xs text-slate-500 mt-1">{agents.length} agents</div>
-        </div>
-        <div className="overflow-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Assigned Leads
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 bg-white">
-            {agents.map((agent) => (
-              <tr key={agent.id} className="hover:bg-slate-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
-                  {agent.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                  {agent.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                    {agent._count.leadsAssigned}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <button
-                    onClick={() => handleDelete(agent.id)}
-                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </div>
-      </div>
+      {(() => {
+        const columns: DataTableColumn<Agent>[] = [
+          {
+            id: 'name',
+            header: 'NAME',
+            sortValue: (r) => r.name,
+            searchValue: (r) => `${r.name} ${r.email}`,
+            cell: (r) => <span className="font-semibold text-slate-900">{r.name}</span>,
+          },
+          {
+            id: 'email',
+            header: 'EMAIL',
+            sortValue: (r) => r.email,
+            searchValue: (r) => r.email,
+            cell: (r) => <span className="text-slate-600">{r.email}</span>,
+          },
+          {
+            id: 'assigned',
+            header: 'ASSIGNED',
+            sortValue: (r) => r._count.leadsAssigned,
+            cell: (r) => (
+              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                {r._count.leadsAssigned}
+              </span>
+            ),
+          },
+          {
+            id: 'actions',
+            header: '',
+            cell: (r) => (
+              <button
+                onClick={() => handleDelete(r.id)}
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+              >
+                Delete
+              </button>
+            ),
+          },
+        ]
+
+        return (
+          <DataTable
+            title="Datatable Simple"
+            subtitle="A lightweight, extendable, dependency-free javascript HTML table plugin."
+            rows={agents}
+            columns={columns}
+            getRowId={(r) => r.id}
+          />
+        )
+      })()}
     </div>
   )
 }

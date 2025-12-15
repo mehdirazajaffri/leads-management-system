@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 interface Lead {
   id: string
@@ -49,14 +50,15 @@ export default function LeadDetailClient({
   const router = useRouter()
   const [selectedStatus, setSelectedStatus] = useState(lead.currentStatus.id)
   const [note, setNote] = useState('')
+  const [callbackDate, setCallbackDate] = useState<string>('')
+  const [callbackTime, setCallbackTime] = useState<string>('')
+  const [callbackNotes, setCallbackNotes] = useState<string>('')
   const [updating, setUpdating] = useState(false)
 
-  const handleStatusUpdate = async () => {
-    if (selectedStatus === lead.currentStatus.id) {
-      alert('Please select a different status')
-      return
-    }
+  const selectedStatusObj = statuses.find((s) => s.id === selectedStatus)
+  const isScheduledCallback = selectedStatusObj?.name === 'Scheduled Callback'
 
+  const handleStatusUpdate = async () => {
     setUpdating(true)
     try {
       const res = await fetch(`/api/agent/leads/${lead.id}`, {
@@ -65,12 +67,15 @@ export default function LeadDetailClient({
         body: JSON.stringify({
           newStatusId: selectedStatus,
           note: note || undefined,
+          scheduledDate: isScheduledCallback && callbackDate ? callbackDate : undefined,
+          scheduledTime: isScheduledCallback && callbackTime ? callbackTime : undefined,
+          callbackNotes: isScheduledCallback && callbackNotes ? callbackNotes : undefined,
         }),
       })
 
       const data = await res.json()
       if (res.ok) {
-        alert('Status updated successfully')
+        alert('Saved successfully')
         router.refresh()
       } else {
         alert(`Error: ${data.message}`)
@@ -84,138 +89,196 @@ export default function LeadDetailClient({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Lead Details</h1>
-        <a
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-xs uppercase tracking-widest text-slate-500">Core Workspace</div>
+          <h1 className="mt-1 text-3xl font-semibold text-slate-900">Lead Calling View</h1>
+        </div>
+        <Link
           href="/agent/assigned-leads"
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
         >
           Back to Leads
-        </a>
+        </Link>
       </div>
 
-      {/* Lead Information */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Lead Information</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Name</p>
-            <p className="font-medium">{lead.name}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Email</p>
-            <p className="font-medium">{lead.email}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Phone</p>
-            <p className="font-medium">{lead.phone}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Source Platform</p>
-            <p className="font-medium">{lead.sourcePlatform}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Campaign</p>
-            <p className="font-medium">{lead.campaignName}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Current Status</p>
-            <p className="font-medium">{lead.currentStatus.name}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Created At</p>
-            <p className="font-medium">{new Date(lead.createdAt).toLocaleString()}</p>
-          </div>
-          {lead.lastContactedAt && (
-            <div>
-              <p className="text-sm text-gray-500">Last Contacted</p>
-              <p className="font-medium">{new Date(lead.lastContactedAt).toLocaleString()}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Status Update */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Update Status</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left column: lead details + update */}
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">New Status</label>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            >
-              {statuses.map((status) => (
-                <option key={status.id} value={status.id}>
-                  {status.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Note (optional)</label>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-              rows={3}
-            />
-          </div>
-          <button
-            onClick={handleStatusUpdate}
-            disabled={updating}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {updating ? 'Updating...' : 'Update Status'}
-          </button>
-        </div>
-      </div>
-
-      {/* Callbacks */}
-      {lead.callbacks.length > 0 && (
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-4">Scheduled Callbacks</h2>
-          <div className="space-y-2">
-            {lead.callbacks.map((callback) => (
-              <div key={callback.id} className="border-b pb-2">
-                <p className="font-medium">
-                  {new Date(callback.scheduledDate).toLocaleDateString()}
-                  {callback.scheduledTime && ` at ${callback.scheduledTime}`}
-                </p>
-                {callback.notes && <p className="text-sm text-gray-500">{callback.notes}</p>}
+          <div className="card">
+            <div className="card-header">
+              <div className="text-sm font-semibold text-slate-900">Lead Details</div>
+              <div className="text-xs text-slate-500 mt-1">Everything you need while on a call.</div>
+            </div>
+            <div className="card-body space-y-3">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-lg font-semibold text-slate-900">{lead.name}</div>
+                  <div className="text-sm text-slate-600 mt-1">{lead.email}</div>
+                </div>
+                <a
+                  href={`tel:${lead.phone}`}
+                  className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  title="Call"
+                >
+                  Call
+                </a>
               </div>
-            ))}
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-slate-500">Phone</div>
+                <div className="mt-1 text-sm font-semibold text-slate-900">{lead.phone}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                  <div className="text-xs uppercase tracking-widest text-slate-500">Source</div>
+                  <div className="mt-1 text-sm font-semibold text-slate-900">{lead.sourcePlatform}</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                  <div className="text-xs uppercase tracking-widest text-slate-500">Campaign</div>
+                  <div className="mt-1 text-sm font-semibold text-slate-900">{lead.campaignName}</div>
+                </div>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-slate-500">Current Status</div>
+                <div className="mt-1 inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                  {lead.currentStatus.name}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-header">
+              <div className="text-sm font-semibold text-slate-900">Status Update & Notes</div>
+              <div className="text-xs text-slate-500 mt-1">Primary action: set status, optionally schedule callback.</div>
+            </div>
+            <div className="card-body space-y-4">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Primary Status</div>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-blue-600/30"
+                >
+                  {statuses.map((status) => (
+                    <option key={status.id} value={status.id}>
+                      {status.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {isScheduledCallback ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Callback Date</div>
+                    <input
+                      type="date"
+                      value={callbackDate}
+                      onChange={(e) => setCallbackDate(e.target.value)}
+                      className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Callback Time</div>
+                    <input
+                      type="time"
+                      value={callbackTime}
+                      onChange={(e) => setCallbackTime(e.target.value)}
+                      className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Callback Notes</div>
+                    <input
+                      value={callbackNotes}
+                      onChange={(e) => setCallbackNotes(e.target.value)}
+                      placeholder="Reason + context for the callback…"
+                      className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-slate-400">Notes</div>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={5}
+                  placeholder="Write call notes…"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-blue-600/30"
+                />
+              </div>
+
+              <button
+                onClick={handleStatusUpdate}
+                disabled={updating}
+                className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {updating ? 'Saving…' : 'Save Update'}
+              </button>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Activity Log */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Activity Log</h2>
-        <div className="space-y-2">
-          {activityLogs.length === 0 ? (
-            <p className="text-gray-500">No activity yet</p>
-          ) : (
-            activityLogs.map((log) => (
-              <div key={log.id} className="border-b pb-2">
-                <p className="text-sm">
-                  <span className="font-medium">{log.agent.name}</span>
-                  {log.oldStatus && log.newStatus && (
-                    <>
-                      {' '}
-                      changed status from <span className="font-medium">{log.oldStatus.name}</span>{' '}
-                      to <span className="font-medium">{log.newStatus.name}</span>
-                    </>
-                  )}
-                </p>
-                {log.note && <p className="text-sm text-gray-600 mt-1">{log.note}</p>}
-                <p className="text-xs text-gray-500 mt-1">
-                  {new Date(log.timestamp).toLocaleString()}
-                </p>
+        {/* Right column: activity history */}
+        <div className="space-y-4">
+          {lead.callbacks.length > 0 ? (
+            <div className="card">
+              <div className="card-header">
+                <div className="text-sm font-semibold text-slate-900">Scheduled Callbacks</div>
+                <div className="text-xs text-slate-500 mt-1">Upcoming callbacks for this lead.</div>
               </div>
-            ))
-          )}
+              <div className="card-body space-y-2">
+                {lead.callbacks.map((callback) => (
+                  <div key={callback.id} className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                    <div className="text-sm font-semibold text-slate-900">
+                      {new Date(callback.scheduledDate).toLocaleDateString()}
+                      {callback.scheduledTime ? ` at ${callback.scheduledTime}` : ''}
+                    </div>
+                    {callback.notes ? <div className="text-xs text-slate-500 mt-1">{callback.notes}</div> : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="card">
+            <div className="card-header">
+              <div className="text-sm font-semibold text-slate-900">Activity Log History</div>
+              <div className="text-xs text-slate-500 mt-1">Status changes and notes with timestamps.</div>
+            </div>
+            <div className="card-body space-y-3">
+              {activityLogs.length === 0 ? (
+                <div className="text-sm text-slate-500">No activity yet</div>
+              ) : (
+                activityLogs.map((log) => (
+                  <div key={log.id} className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="text-sm text-slate-900">
+                          <span className="font-semibold">{log.agent.name}</span>{' '}
+                          {log.oldStatus && log.newStatus ? (
+                            <>
+                              <span className="text-slate-500">changed status from</span>{' '}
+                              <span className="font-semibold">{log.oldStatus.name}</span>{' '}
+                              <span className="text-slate-500">to</span>{' '}
+                              <span className="font-semibold">{log.newStatus.name}</span>
+                            </>
+                          ) : null}
+                        </div>
+                        {log.note ? <div className="text-sm text-slate-700 mt-2">{log.note}</div> : null}
+                      </div>
+                      <div className="text-xs text-slate-500 whitespace-nowrap">
+                        {new Date(log.timestamp).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

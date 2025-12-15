@@ -12,124 +12,146 @@ export default async function AgentDashboard() {
 
   const agentId = session.user.id
 
-  // Get agent's leads stats
-  const [totalLeads, pendingCallbacks, recentActivity] = await Promise.all([
+  const startOfToday = new Date()
+  startOfToday.setHours(0, 0, 0, 0)
+  const endOfToday = new Date()
+  endOfToday.setHours(23, 59, 59, 999)
+
+  const startOfWeek = new Date()
+  // Monday as start of week
+  const day = (startOfWeek.getDay() + 6) % 7
+  startOfWeek.setDate(startOfWeek.getDate() - day)
+  startOfWeek.setHours(0, 0, 0, 0)
+
+  const convertedStatus = await prisma.status.findFirst({ where: { name: 'Converted' } })
+
+  const [myTotalAssignedLeads, convertedThisWeek, callbacksToday] = await Promise.all([
     prisma.lead.count({
       where: {
         assignedToId: agentId,
         isArchived: false,
       },
     }),
-    prisma.callback.count({
+    convertedStatus
+      ? prisma.lead.count({
+          where: {
+            assignedToId: agentId,
+            isArchived: false,
+            currentStatusId: convertedStatus.id,
+            updatedAt: { gte: startOfWeek },
+          },
+        })
+      : Promise.resolve(0),
+    prisma.callback.findMany({
       where: {
-        lead: { assignedToId: agentId },
         completed: false,
-        scheduledDate: { gte: new Date() },
+        scheduledDate: { gte: startOfToday, lte: endOfToday },
+        lead: { assignedToId: agentId, isArchived: false },
       },
-    }),
-    prisma.activityLog.findMany({
-      where: { agentId },
-      take: 10,
-      orderBy: { timestamp: 'desc' },
       include: {
-        lead: { select: { name: true } },
-        newStatus: { select: { name: true } },
+        lead: {
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            email: true,
+            currentStatus: { select: { name: true } },
+          },
+        },
       },
+      orderBy: [{ scheduledDate: 'asc' }],
+      take: 50,
     }),
   ])
 
-  // Get leads by status
-  const leadsByStatus = await prisma.lead.groupBy({
-    by: ['currentStatusId'],
-    where: {
-      assignedToId: agentId,
-      isArchived: false,
-    },
-    _count: {
-      id: true,
-    },
-  })
+  const myConvertedTotal = convertedStatus
+    ? await prisma.lead.count({
+        where: {
+          assignedToId: agentId,
+          isArchived: false,
+          currentStatusId: convertedStatus.id,
+        },
+      })
+    : 0
 
-  const statuses = await prisma.status.findMany()
-  const statusMap = new Map(statuses.map((s) => [s.id, s.name]))
-
-  // Get overdue callbacks
-  const overdueCallbacks = await prisma.callback.count({
-    where: {
-      lead: { assignedToId: agentId },
-      completed: false,
-      scheduledDate: { lt: new Date() },
-    },
-  })
+  const myPersonalConversionRate = myTotalAssignedLeads > 0 ? (myConvertedTotal / myTotalAssignedLeads) * 100 : 0
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Agent Dashboard</h1>
+      <div>
+        <div className="text-xs uppercase tracking-widest text-slate-500">My Work</div>
+        <h1 className="mt-1 text-3xl font-semibold text-slate-900">Agent Dashboard</h1>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Assigned Leads</h3>
-          <p className="text-2xl font-bold mt-2">{totalLeads}</p>
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">My Total Assigned Leads</div>
+            <div className="mt-2 text-3xl font-semibold text-slate-900">{myTotalAssignedLeads}</div>
+            <div className="mt-3 h-1 w-12 rounded-full bg-blue-600/80" />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Pending Callbacks</h3>
-          <p className="text-2xl font-bold mt-2">{pendingCallbacks}</p>
-          {overdueCallbacks > 0 && (
-            <p className="text-sm text-red-600 mt-1">{overdueCallbacks} overdue</p>
-          )}
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">Leads Converted This Week</div>
+            <div className="mt-2 text-3xl font-semibold text-slate-900">{convertedThisWeek}</div>
+            <div className="mt-3 h-1 w-12 rounded-full bg-emerald-600/80" />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-sm font-medium text-gray-500">Leads by Status</h3>
-          <div className="mt-2 space-y-1">
-            {leadsByStatus.map((item) => (
-              <div key={item.currentStatusId} className="flex justify-between text-sm">
-                <span>{statusMap.get(item.currentStatusId) || 'Unknown'}</span>
-                <span className="font-medium">{item._count.id}</span>
-              </div>
-            ))}
+        <div className="card">
+          <div className="card-body">
+            <div className="text-xs uppercase tracking-widest text-slate-500">My Personal Conversion Rate</div>
+            <div className="mt-2 text-4xl font-semibold text-slate-900">{myPersonalConversionRate.toFixed(1)}%</div>
+            <div className="mt-3 h-1 w-12 rounded-full bg-fuchsia-600/70" />
           </div>
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-        <div className="space-y-2">
-          {recentActivity.length === 0 ? (
-            <p className="text-gray-500">No recent activity</p>
-          ) : (
-            recentActivity.map((activity) => (
-              <div key={activity.id} className="border-b pb-2">
-                <p className="text-sm">
-                  Updated <span className="font-medium">{activity.lead.name}</span> to{' '}
-                  <span className="font-medium">{activity.newStatus?.name || 'N/A'}</span>
-                </p>
-                <p className="text-xs text-gray-500">
-                  {new Date(activity.timestamp).toLocaleString()}
-                </p>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <a
-            href="/agent/assigned-leads"
-            className="p-4 border rounded-lg hover:bg-gray-50 text-center"
-          >
-            View My Leads
-          </a>
+      {/* Callbacks Today */}
+      <div className="card">
+        <div className="card-header flex items-center justify-between">
+          <div>
+            <div className="text-sm font-semibold text-slate-900">Callbacks Today</div>
+            <div className="text-xs text-slate-500 mt-1">Prioritized by callback time.</div>
+          </div>
           <a
             href="/agent/callbacks-management"
-            className="p-4 border rounded-lg hover:bg-gray-50 text-center"
+            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
           >
-            Manage Callbacks
+            View all
           </a>
+        </div>
+        <div className="card-body space-y-3">
+          {callbacksToday.length === 0 ? (
+            <div className="text-sm text-slate-500">No callbacks scheduled for today.</div>
+          ) : (
+            callbacksToday.map((cb) => (
+              <a
+                key={cb.id}
+                href={`/agent/lead-detail/${cb.lead.id}`}
+                className="block rounded-xl border border-slate-200 bg-white px-4 py-3 hover:bg-slate-50"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-900">{cb.lead.name}</div>
+                    <div className="text-xs text-slate-500 mt-1">{cb.lead.phone} • {cb.lead.email}</div>
+                    <div className="mt-2 inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                      {cb.lead.currentStatus?.name || 'Scheduled Callback'}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-slate-900">
+                      {new Date(cb.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div className="text-xs text-slate-500 mt-1">
+                      {new Date(cb.scheduledDate).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            ))
+          )}
         </div>
       </div>
     </div>
