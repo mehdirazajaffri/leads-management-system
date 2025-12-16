@@ -12,11 +12,13 @@ export default async function LeadsManagementPage() {
     redirect('/login')
   }
 
+  let leads, agents, statuses
+  let dbError: string | null = null
+
   try {
-    const [leads, agents, statuses] = await Promise.all([
+    [leads, agents, statuses] = await Promise.all([
       prisma.lead.findMany({
         where: { isArchived: false },
-        take: 50,
         include: {
           assignedTo: { select: { id: true, name: true } },
           currentStatus: { select: { id: true, name: true } },
@@ -29,17 +31,6 @@ export default async function LeadsManagementPage() {
       }),
       prisma.status.findMany({ select: { id: true, name: true } }),
     ])
-
-    return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-black">Leads Management</h1>
-        <LeadsManagementClient
-          initialLeads={leads}
-          agents={agents}
-          statuses={statuses}
-        />
-      </div>
-    )
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     if (
@@ -49,14 +40,30 @@ export default async function LeadsManagementPage() {
       msg.includes('P1001') ||
       msg.includes('P1002')
     ) {
-      return (
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-black">Leads Management</h1>
-          <DatabaseUnavailable details={msg} />
-        </div>
-      )
+      dbError = msg
+    } else {
+      throw error
     }
-    throw error
   }
+
+  if (dbError) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold text-black">Leads Management</h1>
+        <DatabaseUnavailable details={dbError} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-black">Leads Management</h1>
+      <LeadsManagementClient
+        initialLeads={leads!}
+        agents={agents!}
+        statuses={statuses!}
+      />
+    </div>
+  )
 }
 
