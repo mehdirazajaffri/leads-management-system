@@ -27,7 +27,10 @@ export async function POST(req: NextRequest) {
 
     // Get default status (first non-final status)
     const defaultStatus = await prisma.status.findFirst({
-      where: { isFinal: false },
+      where: { 
+        isFinal: false,
+        name: 'Need to Contact'
+      },
       orderBy: { name: 'asc' },
     })
 
