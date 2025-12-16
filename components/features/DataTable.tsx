@@ -18,7 +18,7 @@ export type DataTableColumn<T> = {
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   const base = 'h-3 w-3'
-  const color = active ? 'text-slate-500' : 'text-slate-300'
+  const color = active ? 'text-slate-500 dark:text-slate-400' : 'text-slate-300 dark:text-slate-600'
   return (
     <span className="inline-flex flex-col leading-none ml-2">
       <svg
@@ -129,8 +129,8 @@ export default function DataTable<T>({
   return (
     <div className="card overflow-hidden">
       <div className="px-8 py-6">
-        <div className="text-xl font-semibold text-slate-900">{title}</div>
-        {subtitle ? <div className="mt-1 text-sm text-slate-500">{subtitle}</div> : null}
+        <div className="text-xl font-semibold text-slate-900 dark:text-white">{title}</div>
+        {subtitle ? <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">{subtitle}</div> : null}
       </div>
 
       <div className="px-8 pb-4 flex items-center justify-between gap-4">
@@ -141,7 +141,7 @@ export default function DataTable<T>({
               setPageSize(Number(e.target.value))
               setPageIndex(0)
             }}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 shadow-sm"
           >
             {pageSizeOptions.map((opt) => (
               <option key={opt} value={opt}>
@@ -149,7 +149,7 @@ export default function DataTable<T>({
               </option>
             ))}
           </select>
-          <div className="text-sm text-slate-600">entries per page</div>
+          <div className="text-sm text-slate-600 dark:text-slate-400">entries per page</div>
         </div>
 
         <div className="w-full max-w-sm">
@@ -160,16 +160,16 @@ export default function DataTable<T>({
               setPageIndex(0)
             }}
             placeholder="Search…"
-            className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-900/20"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white dark:placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-900/20 dark:focus:ring-slate-400/20"
           />
         </div>
       </div>
 
       <div className="px-0 pb-6">
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800">
           <table className="w-full">
-            <thead className="bg-white">
-              <tr className="border-b border-slate-200">
+            <thead className="bg-white dark:bg-gray-800">
+              <tr className="border-b border-slate-200 dark:border-slate-700">
                 {selectionEnabled ? (
                   <th className="px-6 py-4 text-left">
                     <input type="checkbox" checked={allVisibleSelected} onChange={toggleAllVisible} />
@@ -183,7 +183,7 @@ export default function DataTable<T>({
                     <th
                       key={col.id}
                       className={[
-                        'px-4 py-4 text-left text-xs font-semibold uppercase tracking-widest text-slate-400',
+                        'px-4 py-4 text-left text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500',
                         col.headerClassName || '',
                         sortable ? 'select-none cursor-pointer' : '',
                       ].join(' ')}
@@ -209,7 +209,7 @@ export default function DataTable<T>({
               {paged.map((row) => {
                 const id = getRowId(row)
                 return (
-                  <tr key={id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
+                  <tr key={id} className="border-b border-slate-100 dark:border-slate-700 last:border-b-0 hover:bg-slate-50 dark:hover:bg-gray-700/50">
                     {selectionEnabled ? (
                       <td className="px-6 py-4">
                         <input
@@ -220,7 +220,7 @@ export default function DataTable<T>({
                       </td>
                     ) : null}
                     {columns.map((col) => (
-                      <td key={col.id} className={['px-4 py-4 text-sm text-slate-700', col.className || ''].join(' ')}>
+                      <td key={col.id} className={['px-4 py-4 text-sm text-slate-700 dark:text-slate-300', col.className || ''].join(' ')}>
                         {col.cell(row)}
                       </td>
                     ))}
@@ -231,7 +231,7 @@ export default function DataTable<T>({
               {paged.length === 0 ? (
                 <tr>
                   <td
-                    className="px-6 py-10 text-center text-sm text-slate-500"
+                    className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400"
                     colSpan={columns.length + (selectionEnabled ? 1 : 0)}
                   >
                     No results
@@ -242,14 +242,14 @@ export default function DataTable<T>({
           </table>
         </div>
 
-        <div className="mt-4 px-6 flex items-center justify-end gap-4 text-sm text-slate-600">
+        <div className="mt-4 px-6 flex items-center justify-end gap-4 text-sm text-slate-600 dark:text-slate-400">
           <div>
-            Page <span className="font-semibold text-slate-900">{safePageIndex + 1}</span> of{' '}
-            <span className="font-semibold text-slate-900">{pageCount}</span>
+            Page <span className="font-semibold text-slate-900 dark:text-white">{safePageIndex + 1}</span> of{' '}
+            <span className="font-semibold text-slate-900 dark:text-white">{pageCount}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
-              className="h-10 w-10 grid place-items-center rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50"
+              className="h-10 w-10 grid place-items-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-gray-800 text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 disabled:opacity-50"
               disabled={safePageIndex === 0}
               onClick={() => setPageIndex(Math.max(0, safePageIndex - 1))}
               aria-label="Previous page"
@@ -257,7 +257,7 @@ export default function DataTable<T>({
               ‹
             </button>
             <button
-              className="h-10 w-10 grid place-items-center rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50"
+              className="h-10 w-10 grid place-items-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-gray-800 text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 disabled:opacity-50"
               disabled={safePageIndex >= pageCount - 1}
               onClick={() => setPageIndex(Math.min(pageCount - 1, safePageIndex + 1))}
               aria-label="Next page"

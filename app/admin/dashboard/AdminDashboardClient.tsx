@@ -28,8 +28,8 @@ function KpiCard({
   return (
     <div className="card">
       <div className="card-body">
-        <div className="text-xs uppercase tracking-widest text-slate-500">{label}</div>
-        <div className={['mt-2 font-semibold text-slate-900', emphasis ? 'text-4xl' : 'text-3xl'].join(' ')}>
+        <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">{label}</div>
+        <div className={['mt-2 font-semibold text-slate-900 dark:text-white', emphasis ? 'text-4xl' : 'text-3xl'].join(' ')}>
           {value}
         </div>
         <div className="mt-3 h-1 w-12 rounded-full bg-blue-600/80" />
@@ -92,15 +92,15 @@ export default function AdminDashboardClient({
     <div className="space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <div className="text-xs uppercase tracking-widest text-slate-500">Analytics View</div>
-          <h1 className="mt-1 text-3xl font-semibold text-slate-900">Admin Dashboard</h1>
+          <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">Analytics View</div>
+          <h1 className="mt-1 text-3xl font-semibold text-slate-900 dark:text-white">Admin Dashboard</h1>
         </div>
 
         <div className="flex flex-wrap gap-2">
           <select
             value={campaign}
             onChange={(e) => setCampaign(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 shadow-sm"
           >
             <option value="all">All Campaigns</option>
             {campaigns.map((c) => (
@@ -112,14 +112,14 @@ export default function AdminDashboardClient({
           <select
             value={range}
             onChange={(e) => setRange(e.target.value as AdminAnalyticsRange)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 shadow-sm"
           >
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="90d">Last 90 days</option>
             <option value="all">All time</option>
           </select>
-          {loading ? <div className="text-sm text-slate-500 self-center">Updating…</div> : null}
+          {loading ? <div className="text-sm text-slate-500 dark:text-slate-400 self-center">Updating…</div> : null}
         </div>
       </div>
 
@@ -139,8 +139,8 @@ export default function AdminDashboardClient({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="card lg:col-span-2">
           <div className="card-header">
-            <div className="text-sm font-semibold text-slate-900">Conversion Rate by Agent</div>
-            <div className="text-xs text-slate-500 mt-1">Bar chart comparing each agent’s conversion rate.</div>
+            <div className="text-sm font-semibold text-slate-900 dark:text-white">Conversion Rate by Agent</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Bar chart comparing each agent's conversion rate.</div>
           </div>
           <div className="card-body h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -156,8 +156,8 @@ export default function AdminDashboardClient({
 
         <div className="card">
           <div className="card-header">
-            <div className="text-sm font-semibold text-slate-900">Leads by Source Platform</div>
-            <div className="text-xs text-slate-500 mt-1">Distribution of leads across acquisition sources.</div>
+            <div className="text-sm font-semibold text-slate-900 dark:text-white">Leads by Source Platform</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Distribution of leads across acquisition sources.</div>
           </div>
           <div className="card-body h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -177,33 +177,33 @@ export default function AdminDashboardClient({
       {/* Agent Progress Table */}
       <div className="card overflow-hidden">
         <div className="card-header">
-          <div className="text-sm font-semibold text-slate-900">Agent Progress (Summary)</div>
-          <div className="text-xs text-slate-500 mt-1">
+          <div className="text-sm font-semibold text-slate-900 dark:text-white">Agent Progress (Summary)</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Agent Name, Leads Assigned, Leads Processed Today, Current Conversion Rate.
           </div>
         </div>
         <div className="overflow-auto">
           <table className="min-w-full">
-            <thead className="bg-slate-50">
+            <thead className="bg-slate-50 dark:bg-gray-800">
               <tr>
                 {['Agent', 'Leads Assigned', 'Processed Today', 'Conversion Rate'].map((h) => (
                   <th
                     key={h}
-                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400"
+                    className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-300"
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-gray-800">
               {data.conversionByAgent.map((a) => (
-                <tr key={a.agentId} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 text-sm font-semibold text-slate-900">{a.agentName}</td>
-                  <td className="px-6 py-4 text-sm text-slate-700">{a.leadsAssigned}</td>
-                  <td className="px-6 py-4 text-sm text-slate-700">{a.leadsProcessedToday}</td>
+                <tr key={a.agentId} className="hover:bg-slate-50 dark:hover:bg-gray-700/50">
+                  <td className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">{a.agentName}</td>
+                  <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{a.leadsAssigned}</td>
+                  <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{a.leadsProcessedToday}</td>
                   <td className="px-6 py-4 text-sm">
-                    <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                    <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300">
                       {a.conversionRate.toFixed(1)}%
                     </span>
                   </td>
@@ -211,7 +211,7 @@ export default function AdminDashboardClient({
               ))}
               {data.conversionByAgent.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-10 text-center text-sm text-slate-500">
+                  <td colSpan={4} className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
                     No agents found.
                   </td>
                 </tr>

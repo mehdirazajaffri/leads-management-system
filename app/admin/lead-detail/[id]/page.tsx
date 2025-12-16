@@ -56,7 +56,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   if (dbError) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-black">Lead Detail</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Lead Detail</h1>
         <DatabaseUnavailable details={dbError} />
       </div>
     )

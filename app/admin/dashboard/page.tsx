@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
     if (msg.includes("Can't reach database server") || msg.includes('Connection terminated due to connection timeout')) {
       return (
         <div className="space-y-6">
-          <h1 className="text-3xl font-semibold text-slate-900">Admin Dashboard</h1>
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">Admin Dashboard</h1>
           <DatabaseUnavailable details={msg} />
         </div>
       )

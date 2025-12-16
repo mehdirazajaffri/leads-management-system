@@ -25,8 +25,8 @@ export default async function AssignedLeadsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs uppercase tracking-widest text-slate-500">Pipeline</div>
-        <h1 className="mt-1 text-3xl font-semibold text-slate-900">My Assigned Leads</h1>
+        <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">Pipeline</div>
+        <h1 className="mt-1 text-3xl font-semibold text-slate-900 dark:text-white">My Assigned Leads</h1>
       </div>
       <AssignedLeadsClient leads={leads} />
     </div>

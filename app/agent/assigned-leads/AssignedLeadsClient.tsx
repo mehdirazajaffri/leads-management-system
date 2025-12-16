@@ -22,7 +22,7 @@ export default function AssignedLeadsClient({ leads }: { leads: Lead[] }) {
       header: 'NAME',
       sortValue: (r) => r.name,
       searchValue: (r) => `${r.name} ${r.email} ${r.phone}`,
-      cell: (r) => <span className="font-semibold text-slate-900">{r.name}</span>,
+      cell: (r) => <span className="font-semibold text-slate-900 dark:text-white">{r.name}</span>,
     },
     {
       id: 'status',
@@ -30,7 +30,7 @@ export default function AssignedLeadsClient({ leads }: { leads: Lead[] }) {
       sortValue: (r) => r.currentStatus.name,
       searchValue: (r) => r.currentStatus.name,
       cell: (r) => (
-        <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+        <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-gray-700 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
           {r.currentStatus.name}
         </span>
       ),
@@ -40,13 +40,13 @@ export default function AssignedLeadsClient({ leads }: { leads: Lead[] }) {
       header: 'OFFICE',
       sortValue: (r) => r.sourcePlatform,
       searchValue: (r) => r.sourcePlatform,
-      cell: (r) => <span className="text-slate-600">{r.sourcePlatform}</span>,
+      cell: (r) => <span className="text-slate-600 dark:text-slate-400">{r.sourcePlatform}</span>,
     },
     {
       id: 'start',
       header: 'START DATE',
       sortValue: (r) => new Date(r.createdAt).getTime(),
-      cell: (r) => <span className="text-slate-600">{formatDateReadable(r.createdAt)}</span>,
+      cell: (r) => <span className="text-slate-600 dark:text-slate-400">{formatDateReadable(r.createdAt)}</span>,
     },
     {
       id: 'actions',
@@ -54,7 +54,7 @@ export default function AssignedLeadsClient({ leads }: { leads: Lead[] }) {
       cell: (r) => (
         <Link
           href={`/agent/lead-detail/${r.id}`}
-          className="text-xs font-semibold text-slate-700 hover:text-slate-900"
+          className="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
         >
           Edit
         </Link>

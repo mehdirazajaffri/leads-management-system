@@ -91,27 +91,27 @@ export default function SystemSettingsClient({
       <div className="card">
         <div className="card-body flex items-center justify-between">
           <div>
-            <div className="text-xs uppercase tracking-widest text-slate-500">Settings</div>
-            <h2 className="mt-1 text-lg font-semibold text-slate-900">Status Management</h2>
+            <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">Settings</div>
+            <h2 className="mt-1 text-lg font-semibold text-slate-900 dark:text-white">Status Management</h2>
           </div>
           <button
             onClick={() => setShowCreate(!showCreate)}
-            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+            className="rounded-xl bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-600"
           >
             Create Status
           </button>
         </div>
 
         {showCreate && (
-          <div className="mx-6 mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Create New Status</h3>
+          <div className="mx-6 mb-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-gray-800 p-4">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Create New Status</h3>
             <div className="mt-3 space-y-2">
               <input
                 type="text"
                 placeholder="Status Name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-3 text-sm text-slate-900 dark:text-white shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <label className="flex items-center">
                 <input
@@ -120,12 +120,12 @@ export default function SystemSettingsClient({
                   onChange={(e) => setFormData({ ...formData, isFinal: e.target.checked })}
                   className="mr-2"
                 />
-                <span className="text-sm text-slate-700">Final Status (Converted/Not Converted)</span>
+                <span className="text-sm text-slate-700 dark:text-slate-300">Final Status (Converted/Not Converted)</span>
               </label>
               <div className="flex gap-2">
                 <button
                   onClick={handleCreate}
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  className="rounded-xl bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-600"
                 >
                   Create
                 </button>
@@ -134,7 +134,7 @@ export default function SystemSettingsClient({
                     setShowCreate(false)
                     setFormData({ name: '', isFinal: false })
                   }}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700"
                 >
                   Cancel
                 </button>
@@ -145,14 +145,14 @@ export default function SystemSettingsClient({
 
         <div className="px-6 pb-6 space-y-2">
           {statuses.map((status) => (
-            <div key={status.id} className="flex justify-between items-center rounded-xl border border-slate-200 bg-white px-4 py-3">
+            <div key={status.id} className="flex justify-between items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-3">
               <div>
-                <p className="text-sm font-semibold text-slate-900">{status.name}</p>
-                <p className="text-xs text-slate-500 mt-1">{status.isFinal ? 'Final Status' : 'Intermediate Status'}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{status.name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{status.isFinal ? 'Final Status' : 'Intermediate Status'}</p>
               </div>
               <button
                 onClick={() => handleDelete(status.id)}
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 px-3 py-1.5 text-xs font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50"
               >
                 Delete
               </button>

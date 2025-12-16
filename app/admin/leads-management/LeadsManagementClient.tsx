@@ -224,8 +224,8 @@ export default function LeadsManagementClient({
       <div className="card">
         <div className="card-body flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="text-xs uppercase tracking-widest text-slate-500">Leads</div>
-            <div className="mt-1 text-lg font-semibold text-slate-900">Manage, import, assign</div>
+            <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">Leads</div>
+            <div className="mt-1 text-lg font-semibold text-slate-900 dark:text-white">Manage, import, assign</div>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
@@ -236,7 +236,7 @@ export default function LeadsManagementClient({
             </button>
             <a
               href="/api/admin/leads/export"
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition-colors"
+              className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors"
             >
               Export CSV
             </a>
@@ -247,16 +247,16 @@ export default function LeadsManagementClient({
       <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-4">
         <div className="card">
           <div className="card-header">
-            <div className="text-sm font-semibold text-slate-900">Filters</div>
-            <div className="text-xs text-slate-500 mt-1">Refine your search</div>
+            <div className="text-sm font-semibold text-slate-900 dark:text-white">Filters</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Refine your search</div>
           </div>
           <div className="card-body space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-2">Agent</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Agent</label>
               <select
                 value={filters.agentId}
                 onChange={(e) => setFilters((f) => ({ ...f, agentId: e.target.value }))}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">All Agents</option>
                 <option value="unassigned">Unassigned</option>
@@ -269,11 +269,11 @@ export default function LeadsManagementClient({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-2">Status</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Status</label>
               <select
                 value={filters.statusId}
                 onChange={(e) => setFilters((f) => ({ ...f, statusId: e.target.value }))}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">All Statuses</option>
                 {statuses.map((s) => (
@@ -285,11 +285,11 @@ export default function LeadsManagementClient({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-2">Source Platform</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Source Platform</label>
               <select
                 value={filters.source}
                 onChange={(e) => setFilters((f) => ({ ...f, source: e.target.value }))}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">All Sources</option>
                 {sources.map((s) => (
@@ -301,11 +301,11 @@ export default function LeadsManagementClient({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-2">Campaign</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Campaign</label>
               <select
                 value={filters.campaign}
                 onChange={(e) => setFilters((f) => ({ ...f, campaign: e.target.value }))}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">All Campaigns</option>
                 {campaigns.map((c) => (
@@ -318,7 +318,7 @@ export default function LeadsManagementClient({
 
             <button
               onClick={() => setFilters({ agentId: 'all', statusId: 'all', source: 'all', campaign: 'all' })}
-              className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors"
             >
               Reset Filters
             </button>
@@ -335,8 +335,8 @@ export default function LeadsManagementClient({
                 searchValue: (r) => `${r.name} ${r.email} ${r.phone}`, 
                 cell: (r) => (
                   <Link href={`/admin/lead-detail/${r.id}`} className="block min-w-[180px] hover:opacity-80 transition-opacity">
-                    <div className="font-semibold text-slate-900 text-sm">{r.name}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{r.email}</div>
+                    <div className="font-semibold text-slate-900 dark:text-white text-sm">{r.name}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{r.email}</div>
                   </Link>
                 ),
                 className: 'min-w-[200px]',
@@ -347,7 +347,7 @@ export default function LeadsManagementClient({
                 header: 'PHONE', 
                 sortValue: (r) => r.phone, 
                 searchValue: (r) => r.phone, 
-                cell: (r) => <span className="text-slate-700 text-sm font-mono">{r.phone}</span>,
+                cell: (r) => <span className="text-slate-700 dark:text-slate-300 text-sm font-mono">{r.phone}</span>,
                 className: 'min-w-[120px]',
                 headerClassName: 'min-w-[120px]'
               },
@@ -357,7 +357,7 @@ export default function LeadsManagementClient({
                 sortValue: (r) => r.currentStatus.name, 
                 searchValue: (r) => r.currentStatus.name, 
                 cell: (r) => (
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 whitespace-nowrap">
+                  <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-gray-700 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
                     {r.currentStatus.name}
                   </span>
                 ),
@@ -370,8 +370,8 @@ export default function LeadsManagementClient({
                 sortValue: (r) => r.assignedTo?.name || '', 
                 searchValue: (r) => r.assignedTo?.name || 'Unassigned', 
                 cell: (r) => (
-                  <span className="text-slate-700 text-sm">
-                    {r.assignedTo?.name || <span className="text-slate-400 italic">Unassigned</span>}
+                  <span className="text-slate-700 dark:text-slate-300 text-sm">
+                    {r.assignedTo?.name || <span className="text-slate-400 dark:text-slate-500 italic">Unassigned</span>}
                   </span>
                 ),
                 className: 'min-w-[140px]',
@@ -382,7 +382,7 @@ export default function LeadsManagementClient({
                 header: 'SOURCE', 
                 sortValue: (r) => r.sourcePlatform, 
                 searchValue: (r) => r.sourcePlatform, 
-                cell: (r) => <span className="text-slate-600 text-sm">{r.sourcePlatform}</span>,
+                cell: (r) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.sourcePlatform}</span>,
                 className: 'min-w-[140px]',
                 headerClassName: 'min-w-[140px]'
               },
@@ -391,7 +391,7 @@ export default function LeadsManagementClient({
                 header: 'CAMPAIGN', 
                 sortValue: (r) => r.campaignName, 
                 searchValue: (r) => r.campaignName, 
-                cell: (r) => <span className="text-slate-600 text-sm">{r.campaignName}</span>,
+                cell: (r) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.campaignName}</span>,
                 className: 'min-w-[150px]',
                 headerClassName: 'min-w-[150px]'
               },
@@ -414,19 +414,19 @@ export default function LeadsManagementClient({
 
       {selectedLeads.length > 0 ? (
         <div className="fixed bottom-6 left-6 right-6 z-40 lg:left-[calc(200px+2rem)] xl:left-[calc(290px+2rem)]">
-          <div className="card shadow-lg border-2 border-blue-200">
+          <div className="card shadow-lg border-2 border-blue-200 dark:border-blue-800">
             <div className="card-body flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-sm font-semibold">
                   {selectedLeads.length}
                 </div>
-                <div className="text-sm font-semibold text-slate-900">Lead{selectedLeads.length > 1 ? 's' : ''} Selected</div>
+                <div className="text-sm font-semibold text-slate-900 dark:text-white">Lead{selectedLeads.length > 1 ? 's' : ''} Selected</div>
               </div>
               <div className="flex flex-wrap gap-2 items-center">
                 <select
                   value={assignAgentId}
                   onChange={(e) => setAssignAgentId(e.target.value)}
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Assign To…</option>
                   {agents.map((a) => (
@@ -451,7 +451,7 @@ export default function LeadsManagementClient({
                 </button>
                 <button
                   onClick={() => setSelectedLeads([])}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   Clear
                 </button>
@@ -463,7 +463,7 @@ export default function LeadsManagementClient({
 
       <Modal title="Upload CSV" open={showUpload} onClose={closeUpload}>
         <div className="space-y-4">
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-slate-600 dark:text-slate-400">
             Required headers: <span className="font-mono">Name, Phone, Email, Source Platform, Campaign Name</span>
           </div>
 
@@ -475,42 +475,42 @@ export default function LeadsManagementClient({
               setFile(f)
               if (f) fetchPreview(f)
             }}
-            className="block w-full text-sm text-slate-700 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-700"
+            className="block w-full text-sm text-slate-700 dark:text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-700"
           />
 
-          <label className="flex items-center gap-2 text-sm text-slate-700">
+          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
             <input type="checkbox" checked={skipDuplicates} onChange={(e) => setSkipDuplicates(e.target.checked)} />
             Skip duplicates
           </label>
 
-          {previewLoading ? <div className="text-sm text-slate-500">Generating preview…</div> : null}
+          {previewLoading ? <div className="text-sm text-slate-500 dark:text-slate-400">Generating preview…</div> : null}
           {previewMeta ? (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-gray-800 px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
               <span className="font-semibold">{previewMeta.valid}</span> valid rows,{' '}
               <span className="font-semibold">{previewMeta.errorCount}</span> errors
             </div>
           ) : null}
 
           {previewRows && previewRows.length > 0 ? (
-            <div className="rounded-xl border border-slate-200 overflow-auto">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-auto">
               <table className="min-w-full">
-                <thead className="bg-slate-50">
+                <thead className="bg-slate-50 dark:bg-gray-800">
                   <tr>
                     {Object.keys(previewRows[0]).map((k) => (
                       <th
                         key={k}
-                        className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-widest text-slate-400"
+                        className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500"
                       >
                         {k}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-gray-800">
                   {previewRows.map((row, idx) => (
                     <tr key={idx}>
                       {Object.keys(previewRows[0]).map((k) => (
-                        <td key={k} className="px-4 py-2 text-sm text-slate-700">
+                        <td key={k} className="px-4 py-2 text-sm text-slate-700 dark:text-slate-300">
                           {String(row[k as keyof CSVRow] ?? '')}
                         </td>
                       ))}
@@ -522,7 +522,7 @@ export default function LeadsManagementClient({
           ) : null}
 
           {previewErrors && previewErrors.length > 0 ? (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
               {previewErrors.length} validation errors found (showing up to 10). Fix your CSV to import all rows.
             </div>
           ) : null}
@@ -537,7 +537,7 @@ export default function LeadsManagementClient({
             </button>
             <button
               onClick={closeUpload}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700"
             >
               Cancel
             </button>
