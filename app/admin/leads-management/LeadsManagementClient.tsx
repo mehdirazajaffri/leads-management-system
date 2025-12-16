@@ -1,9 +1,12 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import DataTable, { type DataTableColumn } from '@/components/features/DataTable'
 import Modal from '@/components/features/Modal'
 import { useToast } from '@/context/ToastContext'
+import { useConfirm } from '@/hooks/useConfirm'
+import { ConfirmDialog } from '@/components/ui/confirm/ConfirmDialog'
 
 interface Lead {
   id: string
@@ -47,6 +50,7 @@ export default function LeadsManagementClient({
   statuses: Status[]
 }) {
   const toast = useToast()
+  const confirm = useConfirm()
   const [leads] = useState(initialLeads)
   const [selectedLeads, setSelectedLeads] = useState<string[]>([])
   const [showUpload, setShowUpload] = useState(false)
@@ -58,6 +62,7 @@ export default function LeadsManagementClient({
   const [previewErrors, setPreviewErrors] = useState<ValidationErrorRow[] | null>(null)
   const [previewMeta, setPreviewMeta] = useState<{ valid: number; errorCount: number } | null>(null)
   const [assignAgentId, setAssignAgentId] = useState<string>('')
+  const [archiving, setArchiving] = useState(false)
 
   const [filters, setFilters] = useState<{
     agentId: string
@@ -176,6 +181,44 @@ export default function LeadsManagementClient({
     }
   }
 
+  const handleBulkArchive = async () => {
+    if (selectedLeads.length === 0) {
+      toast.warning('Please select leads to archive')
+      return
+    }
+
+    confirm.confirm({
+      title: 'Archive Leads',
+      message: `Are you sure you want to archive ${selectedLeads.length} lead${selectedLeads.length > 1 ? 's' : ''}? This will hide them from the main view.`,
+      variant: 'warning',
+      confirmText: 'Archive',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        setArchiving(true)
+        try {
+          const res = await fetch('/api/admin/leads/bulk', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ leadIds: selectedLeads }),
+          })
+
+          const data = await res.json()
+          if (res.ok) {
+            toast.success(`Successfully archived ${data.archived} lead${data.archived > 1 ? 's' : ''}`)
+            setSelectedLeads([])
+            window.location.reload()
+          } else {
+            toast.error(`Error: ${data.message}`)
+          }
+        } catch {
+          toast.error('Archive failed')
+        } finally {
+          setArchiving(false)
+        }
+      },
+    })
+  }
+
   return (
     <div className="space-y-6">
       <div className="card">
@@ -291,10 +334,10 @@ export default function LeadsManagementClient({
                 sortValue: (r) => r.name, 
                 searchValue: (r) => `${r.name} ${r.email} ${r.phone}`, 
                 cell: (r) => (
-                  <div className="min-w-[180px]">
+                  <Link href={`/admin/lead-detail/${r.id}`} className="block min-w-[180px] hover:opacity-80 transition-opacity">
                     <div className="font-semibold text-slate-900 text-sm">{r.name}</div>
                     <div className="text-xs text-slate-500 mt-0.5">{r.email}</div>
-                  </div>
+                  </Link>
                 ),
                 className: 'min-w-[200px]',
                 headerClassName: 'min-w-[200px]'
@@ -400,6 +443,13 @@ export default function LeadsManagementClient({
                   Assign Selected
                 </button>
                 <button
+                  onClick={handleBulkArchive}
+                  disabled={archiving}
+                  className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {archiving ? 'Archiving…' : 'Archive Selected'}
+                </button>
+                <button
                   onClick={() => setSelectedLeads([])}
                   className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                 >
@@ -494,6 +544,18 @@ export default function LeadsManagementClient({
           </div>
         </div>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={confirm.isOpen}
+        onClose={confirm.handleCancel}
+        onConfirm={confirm.handleConfirm}
+        title={confirm.options?.title}
+        message={confirm.options?.message || ''}
+        confirmText={confirm.options?.confirmText}
+        cancelText={confirm.options?.cancelText}
+        variant={confirm.options?.variant}
+        loading={confirm.loading}
+      />
     </div>
   )
 }
