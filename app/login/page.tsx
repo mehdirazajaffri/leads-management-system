@@ -30,7 +30,7 @@ export default function LoginPage() {
         router.push('/admin/dashboard')
         router.refresh()
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.')
     } finally {
       setLoading(false)
@@ -72,20 +72,20 @@ export default function LoginPage() {
         {/* Right login card */}
         <div className="card rounded-2xl">
           <div className="card-header">
-            <div className="text-xs uppercase tracking-wide text-slate-500">Welcome back</div>
-            <h2 className="mt-1 text-2xl font-semibold text-slate-900">Sign in</h2>
-            <p className="mt-1 text-sm text-slate-500">Use your email and password.</p>
+            <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Welcome back</div>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-900 dark:text-white">Sign in</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Use your email and password.</p>
           </div>
           <div className="card-body">
             <form className="space-y-4" onSubmit={handleSubmit}>
               {error && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
                   {error}
                 </div>
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Email
                 </label>
                 <input
@@ -94,7 +94,7 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-3 text-slate-900 dark:text-white shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -102,7 +102,7 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Password
                 </label>
                 <input
@@ -111,7 +111,7 @@ export default function LoginPage() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-3 text-slate-900 dark:text-white shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -121,7 +121,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-xl bg-slate-900 dark:bg-slate-700 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Signing in…' : 'Sign in'}
               </button>
