@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Modal from '@/components/features/Modal'
 import { useToast } from '@/context/ToastContext'
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 
 interface AnalyticsDashboardClientProps {
   conversionRates: Array<{
@@ -83,7 +84,7 @@ export default function AnalyticsDashboardClient({
           onClick={() => setShowExportModal(true)}
           className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
         >
-          Export Data
+          Download Report <ArrowDownTrayIcon className="ml-1.5 h-4 w-4 inline" />
         </button>
       </div>
 

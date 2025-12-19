@@ -15,6 +15,7 @@ import {
 } from 'recharts'
 import Modal from '@/components/features/Modal'
 import { useToast } from '@/context/ToastContext'
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 
 const PIE_COLORS = ['#2563eb', '#10b981', '#f59e0b', '#a855f7', '#ef4444', '#14b8a6', '#64748b']
 
@@ -143,7 +144,7 @@ export default function AdminDashboardClient({
             onClick={() => setShowExportModal(true)}
             className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
           >
-            Download Report
+            Download Report <ArrowDownTrayIcon className="ml-1.5 h-4 w-4 inline" />
           </button>
           <select
             value={campaign}
@@ -188,7 +189,7 @@ export default function AdminDashboardClient({
         <div className="card lg:col-span-2">
           <div className="card-header">
             <div className="text-sm font-semibold text-slate-900 dark:text-white">Conversion Rate by Agent</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Bar chart comparing each agent's conversion rate.</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Bar chart comparing each agent&apos;s conversion rate.</div>
           </div>
           <div className="card-body h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
