@@ -143,7 +143,7 @@ export default function AdminDashboardClient({
             onClick={() => setShowExportModal(true)}
             className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
           >
-            Export Data
+            Download Report
           </button>
           <select
             value={campaign}
