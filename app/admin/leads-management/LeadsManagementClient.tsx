@@ -63,6 +63,20 @@ export default function LeadsManagementClient({
   const [previewMeta, setPreviewMeta] = useState<{ valid: number; errorCount: number } | null>(null)
   const [assignAgentId, setAssignAgentId] = useState<string>('')
   const [archiving, setArchiving] = useState(false)
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [creating, setCreating] = useState(false)
+  // Find "Need to Contact" status or use first status as fallback
+  const needToContactStatus = statuses.find((s) => s.name === 'Need to Contact') || statuses[0]
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    sourcePlatform: '',
+    campaignName: '',
+    assignedToId: '',
+    currentStatusId: needToContactStatus?.id || '',
+  })
 
   const [filters, setFilters] = useState<{
     agentId: string
@@ -219,6 +233,67 @@ export default function LeadsManagementClient({
     })
   }
 
+  const handleCreateLead = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.name || !formData.phone || !formData.currentStatusId) {
+      toast.warning('Please fill in all required fields')
+      return
+    }
+
+    setCreating(true)
+    try {
+      const res = await fetch('/api/admin/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          sourcePlatform: formData.sourcePlatform || '',
+          campaignName: formData.campaignName || '',
+          assignedToId: formData.assignedToId || null,
+          currentStatusId: formData.currentStatusId,
+        }),
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        toast.success('Lead created successfully')
+        setShowCreateForm(false)
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          sourcePlatform: '',
+          campaignName: '',
+          assignedToId: '',
+          currentStatusId: needToContactStatus?.id || '',
+        })
+        window.location.reload()
+      } else {
+        toast.error(`Error: ${data.message}`)
+      }
+    } catch {
+      toast.error('Failed to create lead')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const closeCreateForm = () => {
+    setShowCreateForm(false)
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      sourcePlatform: '',
+      campaignName: '',
+      assignedToId: '',
+      currentStatusId: needToContactStatus?.id || '',
+    })
+  }
+
   return (
     <div className="space-y-6">
       <div className="card">
@@ -229,17 +304,25 @@ export default function LeadsManagementClient({
           </div>
           <div className="flex flex-wrap gap-2">
             <button
+              onClick={() => setShowCreateForm(true)}
+              className="rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-colors shadow-sm"
+            >
+              Create Lead
+            </button>
+            <button
               onClick={() => setShowUpload(true)}
               className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors shadow-sm"
             >
               Upload CSV
             </button>
-            <a
-              href="/api/admin/leads/export"
+            <button
+              onClick={() => {
+                window.location.href = '/api/admin/leads/export'
+              }}
               className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors"
             >
               Export CSV
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -464,7 +547,9 @@ export default function LeadsManagementClient({
       <Modal title="Upload CSV" open={showUpload} onClose={closeUpload}>
         <div className="space-y-4">
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            Required headers: <span className="font-mono">Name, Phone, Email, Source Platform, Campaign Name</span>
+            Required headers: <span className="font-mono">Name, Phone</span>
+            <br />
+            Optional headers: <span className="font-mono">Email, Source Platform, Campaign Name</span>
           </div>
 
           <input
@@ -543,6 +628,136 @@ export default function LeadsManagementClient({
             </button>
           </div>
         </div>
+      </Modal>
+
+      <Modal title="Create Lead" open={showCreateForm} onClose={closeCreateForm}>
+        <form onSubmit={handleCreateLead} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="John Doe"
+            />
+          </div>
+
+          
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Phone <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              required
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="+1234567890"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Status <span className="text-red-500">*</span>
+            </label>
+            <select
+              required
+              value={formData.currentStatusId}
+              onChange={(e) => setFormData({ ...formData, currentStatusId: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              {statuses.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Assign To
+            </label>
+            <select
+              value={formData.assignedToId}
+              onChange={(e) => setFormData({ ...formData, assignedToId: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="">Unassigned</option>
+              {agents.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="john@example.com (optional)"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Source Platform
+            </label>
+            <input
+              type="text"
+              value={formData.sourcePlatform}
+              onChange={(e) => setFormData({ ...formData, sourcePlatform: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="Facebook, Google Ads, etc."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Campaign Name
+            </label>
+            <input
+              type="text"
+              value={formData.campaignName}
+              onChange={(e) => setFormData({ ...formData, campaignName: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="Summer Campaign 2025"
+            />
+          </div>
+
+          
+
+          
+
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={creating}
+              className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {creating ? 'Creating…' : 'Create Lead'}
+            </button>
+            <button
+              type="button"
+              onClick={closeCreateForm}
+              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </Modal>
 
       <ConfirmDialog

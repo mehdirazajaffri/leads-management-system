@@ -25,9 +25,15 @@ export const loginSchema = z.object({
 export const createLeadSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   phone: z.string().min(1, 'Phone is required'),
-  email: z.string().email('Invalid email address'),
-  sourcePlatform: z.string().min(1, 'Source platform is required'),
-  campaignName: z.string().min(1, 'Campaign name is required'),
+  email: z
+    .string()
+    .refine((val) => !val || z.string().email().safeParse(val).success, {
+      message: 'Invalid email address',
+    })
+    .optional()
+    .default(''),
+  sourcePlatform: z.string().optional().default(''),
+  campaignName: z.string().optional().default(''),
   assignedToId: z.string().uuid().optional().nullable(),
   currentStatusId: z.string().uuid(),
 })
@@ -58,9 +64,15 @@ export const bulkUpdateLeadsSchema = z.object({
 export const csvRowSchema = z.object({
   Name: z.string().min(1, 'Name is required'),
   Phone: z.string().min(1, 'Phone is required'),
-  Email: z.string().email('Invalid email address'),
-  'Source Platform': z.string().min(1, 'Source Platform is required'),
-  'Campaign Name': z.string().min(1, 'Campaign Name is required'),
+  Email: z
+    .string()
+    .refine((val) => !val || z.string().email().safeParse(val).success, {
+      message: 'Invalid email address',
+    })
+    .optional()
+    .default(''),
+  'Source Platform': z.string().optional().default(''),
+  'Campaign Name': z.string().optional().default(''),
 })
 
 // Status validation

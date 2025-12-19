@@ -64,12 +64,9 @@ export function validateCSVRows(rows: CSVRow[]): ValidationResult {
     // Validate required fields
     if (!sanitizedRow.Name) rowErrors.push('Name is required')
     if (!sanitizedRow.Phone) rowErrors.push('Phone is required')
-    if (!sanitizedRow.Email) rowErrors.push('Email is required')
-    if (!sanitizedRow['Source Platform']) rowErrors.push('Source Platform is required')
-    if (!sanitizedRow['Campaign Name']) rowErrors.push('Campaign Name is required')
 
-    // Validate email format
-    if (sanitizedRow.Email && !validateEmail(sanitizedRow.Email)) {
+    // Validate email format (only if provided)
+    if (sanitizedRow.Email && sanitizedRow.Email.trim() !== '' && !validateEmail(sanitizedRow.Email)) {
       rowErrors.push('Invalid email format')
     }
 
@@ -106,15 +103,18 @@ export async function checkDuplicates(
   const duplicates: CSVRow[] = []
 
   for (const row of rows) {
-    const key = `${row.Email.toLowerCase()}_${row.Phone.replace(/\D/g, '')}`
+    const emailKey = row.Email && row.Email.trim() !== '' ? row.Email.toLowerCase() : ''
+    const key = `${emailKey}_${row.Phone.replace(/\D/g, '')}`
     
     // Check database for existing leads
+    const whereClause: Array<{ phone: string } | { email: string }> = [{ phone: row.Phone }]
+    if (emailKey) {
+      whereClause.push({ email: emailKey })
+    }
+    
     const existing = await prisma.lead.findFirst({
       where: {
-        OR: [
-          { email: row.Email.toLowerCase() },
-          { phone: row.Phone },
-        ],
+        OR: whereClause,
       },
     })
 
@@ -127,7 +127,7 @@ export async function checkDuplicates(
             data: {
               name: row.Name,
               phone: row.Phone,
-              email: row.Email.toLowerCase(),
+              email: emailKey || '',
               sourcePlatform: row['Source Platform'],
               campaignName: row['Campaign Name'],
             },
@@ -172,7 +172,7 @@ export async function importLeads(
       data: rowsToImport.map((row) => ({
         name: row.Name,
         phone: row.Phone,
-        email: row.Email.toLowerCase(),
+        email: row.Email && row.Email.trim() !== '' ? row.Email.toLowerCase() : '',
         sourcePlatform: row['Source Platform'],
         campaignName: row['Campaign Name'],
         currentStatusId: defaultStatusId,
