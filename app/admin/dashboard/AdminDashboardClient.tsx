@@ -13,6 +13,8 @@ import {
   Pie,
   Cell,
 } from 'recharts'
+import Modal from '@/components/features/Modal'
+import { useToast } from '@/context/ToastContext'
 
 const PIE_COLORS = ['#2563eb', '#10b981', '#f59e0b', '#a855f7', '#ef4444', '#14b8a6', '#64748b']
 
@@ -43,10 +45,18 @@ export default function AdminDashboardClient({
 }: {
   initial: AdminDashboardAnalytics
 }) {
+  const toast = useToast()
   const [data, setData] = useState(initial)
   const [campaign, setCampaign] = useState<string>('all')
   const [range, setRange] = useState<AdminAnalyticsRange>('30d')
   const [loading, setLoading] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  const [exportDateRange, setExportDateRange] = useState({
+    startDate: '',
+    endDate: '',
+    includeArchived: false,
+  })
   const campaigns = data.campaigns
 
   useEffect(() => {
@@ -88,6 +98,38 @@ export default function AdminDashboardClient({
     [data.leadsBySource]
   )
 
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const params = new URLSearchParams()
+      if (exportDateRange.startDate) {
+        params.append('startDate', exportDateRange.startDate)
+      }
+      if (exportDateRange.endDate) {
+        params.append('endDate', exportDateRange.endDate)
+      }
+      if (exportDateRange.includeArchived) {
+        params.append('includeArchived', 'true')
+      }
+
+      const url = `/api/admin/leads/export${params.toString() ? `?${params.toString()}` : ''}`
+      window.location.href = url
+      
+      toast.success('Export started. Your download should begin shortly.')
+      setShowExportModal(false)
+      // Reset form
+      setExportDateRange({
+        startDate: '',
+        endDate: '',
+        includeArchived: false,
+      })
+    } catch {
+      toast.error('Export failed')
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -97,6 +139,12 @@ export default function AdminDashboardClient({
         </div>
 
         <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
+          >
+            Export Data
+          </button>
           <select
             value={campaign}
             onChange={(e) => setCampaign(e.target.value)}
@@ -220,6 +268,96 @@ export default function AdminDashboardClient({
           </table>
         </div>
       </div>
+
+      <Modal
+        title="Export Leads Data"
+        open={showExportModal}
+        onClose={() => {
+          setShowExportModal(false)
+          setExportDateRange({
+            startDate: '',
+            endDate: '',
+            includeArchived: false,
+          })
+        }}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Export leads data with all related information including statuses, activity logs, notes, and callbacks.
+            Leave dates empty to export all leads.
+          </p>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Start Date (Optional)
+            </label>
+            <input
+              type="date"
+              value={exportDateRange.startDate}
+              onChange={(e) =>
+                setExportDateRange({ ...exportDateRange, startDate: e.target.value })
+              }
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              End Date (Optional)
+            </label>
+            <input
+              type="date"
+              value={exportDateRange.endDate}
+              onChange={(e) =>
+                setExportDateRange({ ...exportDateRange, endDate: e.target.value })
+              }
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-slate-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="includeArchived"
+              checked={exportDateRange.includeArchived}
+              onChange={(e) =>
+                setExportDateRange({ ...exportDateRange, includeArchived: e.target.checked })
+              }
+              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label
+              htmlFor="includeArchived"
+              className="ml-2 text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
+              Include archived leads
+            </label>
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {exporting ? 'Exporting…' : 'Export CSV'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowExportModal(false)
+                setExportDateRange({
+                  startDate: '',
+                  endDate: '',
+                  includeArchived: false,
+                })
+              }}
+              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
